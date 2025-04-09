@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: 92ea0fdec1e3d2b4082219a3842bfe5b
+timeCreated: 1548991132
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 138690
+  packageName: Creature Theme - Egg Minions ( Skull , Pumpkin , Bomber , Ghost ,
+    EyeBall )
+  packageVersion: 1.0
+  assetPath: Assets/TAZO_3D_C/Creature/Egg_Minions/eyeball/Prefab/eyebat.prefab
+  uploadId: 291662
