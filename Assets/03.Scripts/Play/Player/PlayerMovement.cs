@@ -1,5 +1,7 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
+using UnityEngine.Windows;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -35,6 +37,9 @@ public class PlayerMovement : MonoBehaviour
                 isMoving = false;
             }
         }
+
+        if (inputDir != Vector3.zero)
+            RotateTowardsDirection(inputDir);
     }
 
     public void OnMove(InputValue value)
@@ -51,6 +56,23 @@ public class PlayerMovement : MonoBehaviour
             inputDir = input.x > 0 ? Vector3.right : Vector3.left;
         else
             inputDir = input.y > 0 ? Vector3.forward : Vector3.back;
+    }
+
+    private void RotateTowardsDirection(Vector3 dir)
+    {
+        float yRotation = 0f;
+
+        if (dir == Vector3.forward) 
+            yRotation = 0f;
+        else if (dir == Vector3.right)
+            yRotation = 90f;
+        else if (dir == Vector3.back)
+            yRotation = 180f;
+        else if (dir == Vector3.left)
+            yRotation = 270f;
+
+        Quaternion targetRotation = Quaternion.Euler(0f, yRotation, 0f);
+        transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, 720 * Time.deltaTime);
     }
 
     private Vector3 SnapToGrid(Vector3 pos)
