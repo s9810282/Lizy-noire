@@ -13,7 +13,7 @@ public enum MonsterPattern
 public class MonsterData : ScriptableObject
 {
     public string name;
-    public string damage;
+    public float damage;
 
-    public string maxHp;
+    public float maxHp;
 }
