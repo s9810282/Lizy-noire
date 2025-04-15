@@ -1,6 +1,7 @@
 #if UNITY_EDITOR
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 using static UnityEngine.EventSystems.EventTrigger;
 #endif
 
@@ -79,7 +80,7 @@ public class MapDataEditor : Editor
 
             // Enum dropdown
             entry.key = (ETileType)EditorGUILayout.EnumPopup(entry.key, GUILayout.Width(150));
-            entry.sprite = (Sprite)EditorGUILayout.ObjectField(entry.sprite, typeof(Sprite), false);
+            entry.tile = (Tile)EditorGUILayout.ObjectField(entry.tile, typeof(Tile), false);
 
             if (GUILayout.Button("X", GUILayout.Width(20)))
             {

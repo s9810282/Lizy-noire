@@ -11,11 +11,21 @@ public enum ETileType
     None = 0,
     START,
 
+    Floor_1,
+    Floor_2,
+    Floor_3,
+
     Wall_1,
     Wall_2,
     Wall_3,
     Wall_4,
     Wall_5,
+    Wall_6,
+
+    B_Wall_1,
+    B_Wall_2,
+    B_Wall_3,
+
 
     Chest_1,
 

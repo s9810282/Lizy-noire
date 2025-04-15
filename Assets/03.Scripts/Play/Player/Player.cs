@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Playables;
 
 public enum EPlayerState
 { 
@@ -12,12 +13,18 @@ public enum EPlayerState
 
 }
 
+public enum AttakcType
+{
+    Blow,
+    Slash,
+    Ult,
+}
 
 
 public class Player : MonoBehaviour
 {
     [SerializeField] PlayerMovement playerMovement;
-
+    [SerializeField] AttakcType attakcType;
 
 
     void Start()

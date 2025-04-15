@@ -13,7 +13,7 @@ using static UnityEditor.Progress;
 public class TileSpriteEntry
 {
     public ETileType key;
-    public Sprite sprite;
+    public Tile tile;
 }
 
 [System.Serializable]
@@ -38,12 +38,12 @@ public class MakeMapData : MonoBehaviour
 
     public List<TileSpriteEntry> tileSpritesList = new();
 
-    private Dictionary<ETileType, Sprite> tileSprites;
-    public Dictionary<ETileType, Sprite> GetTileSprites()
+    private Dictionary<ETileType, Tile> tileSprites;
+    public Dictionary<ETileType, Tile> GetTileSprites()
     {
         if (tileSprites == null || tileSprites.Count != tileSpritesList.Count)
         {
-            tileSprites = tileSpritesList.ToDictionary(entry => entry.key, entry => entry.sprite);
+            tileSprites = tileSpritesList.ToDictionary(entry => entry.key, entry => entry.tile);
         }
         return tileSprites;
     }
@@ -93,14 +93,16 @@ public class MakeMapData : MonoBehaviour
 
         for (int i = 0; i < tileSpritesList.Count; i++)
         {
-            if (tile.sprite == tileSpritesList[i].sprite)
+            if (tile == tileSpritesList[i].tile)
             {
+                Debug.Log("Check BG");
                 return tileSpritesList[i].key;
             }
         }
 
         return ETileType.None;
     }
+
     public ETileType CheckTileType(int x, int y)
     {
         Vector3Int cellPos = new Vector3Int(x, y, 0); // 원하는 타일 좌표
@@ -112,8 +114,9 @@ public class MakeMapData : MonoBehaviour
 
         for(int i = 0; i < tileSpritesList.Count; i++)
         {
-            if (tile.sprite == tileSpritesList[i].sprite)
+            if (tile == tileSpritesList[i].tile)
             {
+                Debug.Log("Check Map");
                 return tileSpritesList[i].key;
             }
         }
@@ -129,7 +132,7 @@ public class MakeMapData : MonoBehaviour
 
     public Sprite GetTileSprite(ETileType type)
     {
-        return tileSprites[type];
+        return tileSprites[type].sprite;
     }
 
 
@@ -152,7 +155,8 @@ public class MakeMapData : MonoBehaviour
             Tile tile = ScriptableObject.CreateInstance<Tile>();
             tile.sprite = GetTileSprite(bgTiles[i].TileType);
 
-            bgTilemap.SetTile(cellPos, tile);
+            //bgTilemap.SetTile(cellPos, tile);
+            bgTilemap.SetTile(cellPos, tileSprites[bgTiles[i].TileType]); 
         }
 
 
@@ -166,7 +170,8 @@ public class MakeMapData : MonoBehaviour
             Tile tile = ScriptableObject.CreateInstance<Tile>();
             tile.sprite = GetTileSprite(tiles[i].TileType);
 
-            tilemap.SetTile(cellPos, tile);
+            //tilemap.SetTile(cellPos, tile);
+            tilemap.SetTile(cellPos, tileSprites[tiles[i].TileType]);
         }
 
     }

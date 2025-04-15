@@ -1,7 +1,9 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.Windows;
+using static UnityEngine.InputSystem.InputAction;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -9,6 +11,11 @@ public class PlayerMovement : MonoBehaviour
     private Vector3 targetPos;
     private bool isMoving = false;
     private Vector3 inputDir = Vector3.zero;
+
+    private bool isKnockedBack = false;
+
+    [SerializeField] LayerMask wallLayer;
+    [SerializeField] LayerMask bounceLayer;
 
     void Start()
     {
@@ -18,11 +25,24 @@ public class PlayerMovement : MonoBehaviour
 
     public void Handle()
     {
+        RotateTowardsDirection(inputDir);
+
+        if (CheckWall(inputDir))
+        {
+            inputDir = Vector3.zero;
+            return;
+        }
+        if (CheckBounce(inputDir, out RaycastHit bounceHit))
+        {
+            KnockbackParabola(-inputDir);
+            inputDir = Vector3.zero;
+            return;
+        }
+
         if (!isMoving && inputDir != Vector3.zero)
         {
             Vector3 nextPos = targetPos + inputDir;
 
-            // 충돌 처리 나중에 → 지금은 무조건 이동
             targetPos = SnapToGrid(nextPos);
             isMoving = true;
         }
@@ -37,14 +57,14 @@ public class PlayerMovement : MonoBehaviour
                 isMoving = false;
             }
         }
-
-        if (inputDir != Vector3.zero)
-            RotateTowardsDirection(inputDir);
     }
 
-    public void OnMove(InputValue value)
+
+    public void OnMove(CallbackContext context)
     {
-        Vector2 input = value.Get<Vector2>();
+        if (isKnockedBack) return;
+
+        Vector2 input = context.ReadValue<Vector2>();
 
         if (input == Vector2.zero)
         {
@@ -60,6 +80,9 @@ public class PlayerMovement : MonoBehaviour
 
     private void RotateTowardsDirection(Vector3 dir)
     {
+        if (dir == Vector3.zero)
+            return;
+
         float yRotation = 0f;
 
         if (dir == Vector3.forward) 
@@ -72,7 +95,7 @@ public class PlayerMovement : MonoBehaviour
             yRotation = 270f;
 
         Quaternion targetRotation = Quaternion.Euler(0f, yRotation, 0f);
-        transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, 720 * Time.deltaTime);
+        transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, 900 * Time.deltaTime);
     }
 
     private Vector3 SnapToGrid(Vector3 pos)
@@ -82,5 +105,59 @@ public class PlayerMovement : MonoBehaviour
             Mathf.Round(pos.y),
             Mathf.Round(pos.z)
         );
+    }
+
+
+    private bool CheckWall(Vector3 dir)
+    {
+        return Physics.Raycast(transform.position, dir, 0.8f, wallLayer);
+    }
+
+    private bool CheckBounce(Vector3 dir, out RaycastHit hit)
+    {
+        return Physics.Raycast(transform.position, dir, out hit, 0.5f, bounceLayer);
+    }
+
+    public void KnockbackParabola(Vector3 direction, float distance = 2f, float height = 1f, float duration = 0.4f)
+    {
+        if (isKnockedBack) return;
+
+        StartCoroutine(DoParabolaKnockback(direction.normalized, distance, height, duration));
+    }
+
+    IEnumerator DoParabolaKnockback(Vector3 dir, float dist, float height, float duration)
+    {
+        isKnockedBack = true;
+
+        Vector3 start = transform.position;
+        Vector3 end = SnapToGrid(start + dir * dist);
+        float elapsed = 0f;
+
+        inputDir = Vector3.zero;
+
+        while (elapsed < duration)
+        {
+            float t = elapsed / duration;
+            float yOffset = 4 * height * t * (1 - t); // 포물선 궤도
+            Vector3 pos = Vector3.Lerp(start, end, t);
+            pos.y += yOffset;
+            transform.position = pos;
+
+            if(CheckWall(dir))
+            {
+                end = SnapToGrid(transform.position);
+            }
+
+            RotateTowardsDirection(-dir);
+
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+
+        inputDir = Vector3.zero;
+        transform.position = end;
+        targetPos = transform.position;
+        yield return new WaitForEndOfFrame();
+        isKnockedBack = false;
     }
 }
