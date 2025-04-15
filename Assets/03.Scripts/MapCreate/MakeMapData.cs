@@ -2,6 +2,7 @@ using NUnit.Framework.Constraints;
 using System.Collections.Generic;
 using System.Linq;
 using System.Resources;
+using UnityEditor;
 using UnityEditor.U2D.Aseprite;
 using UnityEngine;
 using UnityEngine.Tilemaps;
@@ -80,7 +81,15 @@ public class MakeMapData : MonoBehaviour
                 mapData.tiles.Add(tile2);
             }
         }
+
+#if UNITY_EDITOR
+        EditorUtility.SetDirty(mapData);
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();
+#endif
     }
+
+
 
     public ETileType CheckBGTileType(int x, int y)
     {

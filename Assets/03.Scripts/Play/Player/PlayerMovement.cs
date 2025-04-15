@@ -27,7 +27,9 @@ public class PlayerMovement : MonoBehaviour
     {
         RotateTowardsDirection(inputDir);
 
-        if (CheckWall(inputDir))
+        if (isKnockedBack) return;
+
+        if (CheckWall(inputDir, out RaycastHit WallHit))
         {
             inputDir = Vector3.zero;
             return;
@@ -37,7 +39,14 @@ public class PlayerMovement : MonoBehaviour
             KnockbackParabola(-inputDir);
             inputDir = Vector3.zero;
             return;
+
         }
+
+        Move();
+    }
+
+    public void Move()
+    {
 
         if (!isMoving && inputDir != Vector3.zero)
         {
@@ -60,6 +69,9 @@ public class PlayerMovement : MonoBehaviour
     }
 
 
+
+
+
     public void OnMove(CallbackContext context)
     {
         if (isKnockedBack) return;
@@ -77,7 +89,6 @@ public class PlayerMovement : MonoBehaviour
         else
             inputDir = input.y > 0 ? Vector3.forward : Vector3.back;
     }
-
     private void RotateTowardsDirection(Vector3 dir)
     {
         if (dir == Vector3.zero)
@@ -102,19 +113,22 @@ public class PlayerMovement : MonoBehaviour
     {
         return new Vector3(
             Mathf.Round(pos.x),
-            Mathf.Round(pos.y),
+            1f,
             Mathf.Round(pos.z)
         );
     }
 
 
-    private bool CheckWall(Vector3 dir)
+    private bool CheckWall(Vector3 dir, out RaycastHit hit, float distatnce = 0.8f)
     {
-        return Physics.Raycast(transform.position, dir, 0.8f, wallLayer);
+        
+        return Physics.Raycast(transform.position, dir, out hit, distatnce, wallLayer);
     }
-
     private bool CheckBounce(Vector3 dir, out RaycastHit hit)
     {
+        Vector3 vec = transform.position;
+        vec.y = 1f;
+        
         return Physics.Raycast(transform.position, dir, out hit, 0.5f, bounceLayer);
     }
 
@@ -124,6 +138,7 @@ public class PlayerMovement : MonoBehaviour
 
         StartCoroutine(DoParabolaKnockback(direction.normalized, distance, height, duration));
     }
+
 
     IEnumerator DoParabolaKnockback(Vector3 dir, float dist, float height, float duration)
     {
@@ -135,6 +150,13 @@ public class PlayerMovement : MonoBehaviour
 
         inputDir = Vector3.zero;
 
+        bool isFirst = false;
+
+        if (CheckWall(dir, out RaycastHit WallHit, 2f))
+        {
+            end = SnapToGrid(WallHit.transform.position - dir);
+        }
+
         while (elapsed < duration)
         {
             float t = elapsed / duration;
@@ -142,11 +164,6 @@ public class PlayerMovement : MonoBehaviour
             Vector3 pos = Vector3.Lerp(start, end, t);
             pos.y += yOffset;
             transform.position = pos;
-
-            if(CheckWall(dir))
-            {
-                end = SnapToGrid(transform.position);
-            }
 
             RotateTowardsDirection(-dir);
 
@@ -157,6 +174,7 @@ public class PlayerMovement : MonoBehaviour
         inputDir = Vector3.zero;
         transform.position = end;
         targetPos = transform.position;
+
         yield return new WaitForEndOfFrame();
         isKnockedBack = false;
     }
