@@ -7,12 +7,20 @@ using static UnityEngine.InputSystem.InputAction;
 
 public class PlayerMovement : MonoBehaviour
 {
-    public float moveSpeed = 5f;
-    private Vector3 targetPos;
-    private bool isMoving = false;
-    private Vector3 inputDir = Vector3.zero;
+    [SerializeField] float moveSpeed = 5f;
+    [SerializeField] float rotateSpeed = 1080f;
 
-    private bool isKnockedBack = false;
+    [Space(10f)]
+
+    [SerializeField] Vector3 targetPos;
+    [SerializeField] Vector3 inputDir = Vector3.zero;
+
+    [Space(10f)]
+
+    [SerializeField] bool isMoving = false;
+    [SerializeField] bool isKnockedBack = false;
+
+    [Space(10f)]
 
     [SerializeField] LayerMask wallLayer;
     [SerializeField] LayerMask bounceLayer;
@@ -25,25 +33,23 @@ public class PlayerMovement : MonoBehaviour
 
     public void Handle()
     {
-        RotateTowardsDirection(inputDir);
-
         if (isKnockedBack) return;
 
         if (CheckWall(inputDir, out RaycastHit WallHit))
         {
             inputDir = Vector3.zero;
-            return;
         }
-        if (CheckBounce(inputDir, out RaycastHit bounceHit))
+        else if (CheckBounce(inputDir, out RaycastHit bounceHit))
         {
             KnockbackParabola(-inputDir);
             inputDir = Vector3.zero;
-            return;
-
         }
 
+
+        RotateTowardsDirection();
         Move();
     }
+
 
     public void Move()
     {
@@ -55,7 +61,7 @@ public class PlayerMovement : MonoBehaviour
             targetPos = SnapToGrid(nextPos);
             isMoving = true;
         }
-
+        
         if (isMoving)
         {
             transform.position = Vector3.MoveTowards(transform.position, targetPos, moveSpeed * Time.deltaTime);
@@ -67,11 +73,6 @@ public class PlayerMovement : MonoBehaviour
             }
         }
     }
-
-
-
-
-
     public void OnMove(CallbackContext context)
     {
         if (isKnockedBack) return;
@@ -89,14 +90,36 @@ public class PlayerMovement : MonoBehaviour
         else
             inputDir = input.y > 0 ? Vector3.forward : Vector3.back;
     }
-    private void RotateTowardsDirection(Vector3 dir)
+
+
+
+    public void RotateTowardsDirection()
+    {
+        if (inputDir == Vector3.zero)
+            return;
+
+        float yRotation = 0f;
+
+        if (inputDir == Vector3.forward)
+            yRotation = 0f;
+        else if (inputDir == Vector3.right)
+            yRotation = 90f;
+        else if (inputDir == Vector3.back)
+            yRotation = 180f;
+        else if (inputDir == Vector3.left)
+            yRotation = 270f;
+
+        Quaternion targetRotation = Quaternion.Euler(0f, yRotation, 0f);
+        transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, rotateSpeed * Time.deltaTime);
+    }
+    public void RotateTowardsDirection(Vector3 dir)
     {
         if (dir == Vector3.zero)
             return;
 
         float yRotation = 0f;
 
-        if (dir == Vector3.forward) 
+        if (dir == Vector3.forward)
             yRotation = 0f;
         else if (dir == Vector3.right)
             yRotation = 90f;
@@ -106,10 +129,31 @@ public class PlayerMovement : MonoBehaviour
             yRotation = 270f;
 
         Quaternion targetRotation = Quaternion.Euler(0f, yRotation, 0f);
-        transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, 900 * Time.deltaTime);
+        transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, rotateSpeed * Time.deltaTime);
+    }
+    public void RotateTowardsDirectionEuler()
+    {
+        if (inputDir == Vector3.zero)
+            return;
+
+        float yRotation = 0f;
+
+        if (inputDir == Vector3.forward)
+            yRotation = 0f;
+        else if (inputDir == Vector3.right)
+            yRotation = 90f;
+        else if (inputDir == Vector3.back)
+            yRotation = 180f;
+        else if (inputDir == Vector3.left)
+            yRotation = 270f;
+
+        Quaternion targetRotation = Quaternion.Euler(0f, yRotation, 0f);
+        transform.rotation = targetRotation;
     }
 
-    private Vector3 SnapToGrid(Vector3 pos)
+
+
+    public Vector3 SnapToGrid(Vector3 pos)
     {
         return new Vector3(
             Mathf.Round(pos.x),
@@ -119,12 +163,12 @@ public class PlayerMovement : MonoBehaviour
     }
 
 
-    private bool CheckWall(Vector3 dir, out RaycastHit hit, float distatnce = 0.8f)
+    public bool CheckWall(Vector3 dir, out RaycastHit hit, float distatnce = 0.8f)
     {
         
         return Physics.Raycast(transform.position, dir, out hit, distatnce, wallLayer);
     }
-    private bool CheckBounce(Vector3 dir, out RaycastHit hit)
+    public bool CheckBounce(Vector3 dir, out RaycastHit hit)
     {
         Vector3 vec = transform.position;
         vec.y = 1f;
@@ -132,14 +176,14 @@ public class PlayerMovement : MonoBehaviour
         return Physics.Raycast(transform.position, dir, out hit, 0.5f, bounceLayer);
     }
 
+
+
     public void KnockbackParabola(Vector3 direction, float distance = 2f, float height = 1f, float duration = 0.4f)
     {
         if (isKnockedBack) return;
 
         StartCoroutine(DoParabolaKnockback(direction.normalized, distance, height, duration));
     }
-
-
     IEnumerator DoParabolaKnockback(Vector3 dir, float dist, float height, float duration)
     {
         isKnockedBack = true;
@@ -150,7 +194,6 @@ public class PlayerMovement : MonoBehaviour
 
         inputDir = Vector3.zero;
 
-        bool isFirst = false;
 
         if (CheckWall(dir, out RaycastHit WallHit, 2f))
         {

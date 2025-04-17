@@ -16,4 +16,8 @@ public class MonsterData : ScriptableObject
     public float damage;
 
     public float maxHp;
+
+    public int shieldDir;
+    public int monsterDrop;
+    public int bounceDistance;
 }

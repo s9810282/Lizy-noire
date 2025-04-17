@@ -13,6 +13,8 @@ public enum EPlayerState
 
 }
 
+
+
 public enum AttakcType
 {
     Blow,
@@ -23,10 +25,6 @@ public enum AttakcType
 
 public class Player : MonoBehaviour
 {
-    [SerializeField] PlayerMovement playerMovement;
-    [SerializeField] AttakcType attakcType;
-
-
     void Start()
     {
         
@@ -35,6 +33,7 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        playerMovement.Handle();
+        
+        
     }
 }
