@@ -65,6 +65,6 @@ public class MapData : ScriptableObject
     public string stageName;
     public Vector2 mapSize;
 
-    public List<MapTile> tiles;
-    public List<MapTile> bgTiles;
+    public List<MapTile> tiles = new List<MapTile>();
+    public List<MapTile> bgTiles = new List<MapTile>();
 }
