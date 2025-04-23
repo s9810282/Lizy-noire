@@ -15,3 +15,8 @@ MonoBehaviour:
   name: Ghost
   damage: 10
   maxHp: 100
+  speed: 95
+  monsterValue:
+    shieldDir: 3
+    monsterDrop: 500
+    bounceDistance: 4

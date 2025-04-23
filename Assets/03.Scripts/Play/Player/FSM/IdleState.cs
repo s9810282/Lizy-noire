@@ -9,22 +9,30 @@ public class IdleState : IState
         this.player = player;
     }
 
-    public void Enter() { }
+    public void Enter() 
+    {
+        player.PlayerState = EPlayerState.Idle;
+    }
 
     public void Update()
     {
+        if (player.CheckBounce(player.InputDirection, out RaycastHit bounceHit))
+        {
+            Monster target = bounceHit.collider.GetComponent<Monster>();
+
+            if (target != null)
+            {
+                player.FSMMachine.ChangeState(new KnockbackState(player, -player.InputDirection, target));
+                return;
+            }            
+        }
+
         if (player.InputDirection != Vector3.zero)
         {
             if (player.CheckWall(player.InputDirection, out _))
             {
                 player.RotateInstantly(player.InputDirection);
                 player.ResetInput();
-                return;
-            }
-
-            if (player.CheckBounce(player.InputDirection, out _))
-            {
-                player.FSMMachine.ChangeState(new KnockbackState(player, -player.InputDirection));
                 return;
             }
 

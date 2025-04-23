@@ -7,15 +7,15 @@ public enum EPlayerState
 
     Exhaustion, //탈진
     Stiffness, //경직
-    Stun, //스턴
-    Fainting, //기절
-    Battle,
-
+    Idle, //스턴
+    Move, //기절
+    KnockBack,
+    Boost,
 }
 
 
 
-public enum AttakcType
+public enum EAttakcType
 {
     Blow,
     Slash,

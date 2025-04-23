@@ -11,6 +11,8 @@ public class MoveState : IState
 
     public void Enter()
     {
+        player.PlayerState = EPlayerState.Move;
+
         Vector3 nextPos = player.TargetPosition + player.InputDirection;
 
         if (player.CheckWall(player.InputDirection, out _))
@@ -23,8 +25,13 @@ public class MoveState : IState
 
         if (player.CheckBounce(player.InputDirection, out RaycastHit bounceHit))
         {
-            player.FSMMachine.ChangeState(new KnockbackState(player, -player.InputDirection));
-            return;
+            Monster target = bounceHit.collider.GetComponent<Monster>();
+            
+            if (target != null)
+            {
+                player.FSMMachine.ChangeState(new KnockbackState(player, -player.InputDirection, target));
+                return;
+            }
         }
 
         player.SetTargetPosition(nextPos);
@@ -32,12 +39,23 @@ public class MoveState : IState
 
     public void Update()
     {
+        if (player.CheckBounce(player.InputDirection, out RaycastHit bounceHit))
+        {
+            Monster target = bounceHit.collider.GetComponent<Monster>();
+
+            if (target != null)
+            {
+                player.FSMMachine.ChangeState(new KnockbackState(player, -player.InputDirection, target));
+                return;
+            }
+        }
+
         player.RotateTowardsDirection();
 
         player.transform.position = Vector3.MoveTowards(
             player.transform.position,
             player.TargetPosition,
-            player.MoveSpeed * Time.deltaTime);
+            player.BaseMoveSpeed * Time.deltaTime);
 
 
         if (Vector3.Distance(player.transform.position, player.TargetPosition) < 0.01f)

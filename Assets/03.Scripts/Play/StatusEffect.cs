@@ -2,32 +2,50 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public interface IEffectTarget
+{
+    void ModifyMoveSpeed(float factor);
+    void TakeTickDamage(float value);
+    void SetDamaAble(bool value);
+}
+
+public enum EStatusEffect
+{ 
+    Exhaustion,
+    SpeedUp,
+}
 
 
+
+[System.Serializable]
 public abstract class StatusEffect
 {
     private string buffName;
     private float duration;
-
-    protected GameObject target;
+    private IEffectTarget target;
+    private EStatusEffect statusEffect;
 
     public float Duration { get => duration; set => duration = value; }
     public string BuffName { get => buffName; set => buffName = value; }
+    public IEffectTarget Target { get => target; set => target = value; }
+    public EStatusEffect eStatusEffect { get => statusEffect; set => statusEffect = value; }
+    
 
-    public StatusEffect(string name, float duration, GameObject target = null)
+    public StatusEffect(string name, float duration, IEffectTarget target, EStatusEffect eStatusEffect)
     {
         this.buffName = name;
         this.duration = duration;
-        this.target = target;
+        this.target = target;  
+        this.statusEffect = eStatusEffect;
     }
 
-    public void SetTarget(GameObject target)
-    {
-        this.target = target;
-    }
+
     public abstract void ApplyEffect();
     public abstract void RemoveEffect();
+    public virtual void UpdateEffect()
+    {
 
+    }
     public virtual void Updateduration(float time)
     {
         duration -= time;
