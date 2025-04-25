@@ -10,6 +10,11 @@ public enum RelativeDirection
     Right
 }
 
+public enum EMonsterPattern
+{
+    Roam,
+
+}
 
 public class Monster : MonoBehaviour, IDamageAble
 {
