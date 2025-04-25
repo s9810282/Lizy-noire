@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Rendering;
 using UnityEngine.UI;
 
 public class HpBar : MonoBehaviour
@@ -7,6 +8,7 @@ public class HpBar : MonoBehaviour
     [SerializeField] Vector3 offset = new Vector3(0, 2, 0);
 
     [SerializeField] Image fillImage;
+    [SerializeField] Image bgImage;
 
     [SerializeField] Camera camera;
 
@@ -15,7 +17,7 @@ public class HpBar : MonoBehaviour
         camera = Camera.main;    
     }
 
-    // Update is called once per frame
+    
     void LateUpdate()
     {
         if (target == null) return;
@@ -27,5 +29,15 @@ public class HpBar : MonoBehaviour
     public void SetHP(float current, float max)
     {
         fillImage.fillAmount = current / max;
+    }
+
+    public void HideHpBar(bool isTrue)
+    {
+        gameObject.SetActive(isTrue);
+
+        Color color = isTrue ? Color.white : Color.clear;
+
+        fillImage.color = color;
+        bgImage.color = color;
     }
 }

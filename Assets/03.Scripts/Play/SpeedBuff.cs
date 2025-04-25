@@ -16,7 +16,6 @@ public class SpeedBuff : StatusEffect
 
     public override void ApplyEffect()
     {
-        Target.SetDamaAble(true);
         Target.ModifyMoveSpeed(speedValue);
     }
 
@@ -27,7 +26,6 @@ public class SpeedBuff : StatusEffect
 
     public override void RemoveEffect()
     {
-        Target.SetDamaAble(false);
         Target.ModifyMoveSpeed(-speedValue);
     }
 }

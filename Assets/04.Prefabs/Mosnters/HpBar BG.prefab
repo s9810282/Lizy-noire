@@ -92,6 +92,7 @@ MonoBehaviour:
   target: {fileID: 0}
   offset: {x: 0, y: 1, z: 0}
   fillImage: {fileID: 5578171643030871917}
+  bgImage: {fileID: 7764831466310787532}
   camera: {fileID: 0}
 --- !u!1 &6670830862634785371
 GameObject:

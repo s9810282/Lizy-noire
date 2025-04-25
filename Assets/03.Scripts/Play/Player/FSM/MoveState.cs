@@ -4,62 +4,44 @@ public class MoveState : IState
 {
     private PlayerController player;
 
-    public MoveState(PlayerController player)
+    private bool isAlready = false;
+    private Vector3 targetforward = Vector3.zero;
+
+    public MoveState(PlayerController player, bool isAlready = false)
     {
         this.player = player;
+        this.isAlready = isAlready;
     }
 
     public void Enter()
     {
         player.PlayerState = EPlayerState.Move;
 
-        Vector3 nextPos = player.TargetPosition + player.InputDirection;
+        if (CheckWall()) return;
+        CheckBounce();
 
-        if (player.CheckWall(player.InputDirection, out _))
+        if (!isAlready)
         {
-            player.RotateInstantly(player.InputDirection);
-            player.ResetInput();
-            player.FSMMachine.ChangeState(new IdleState(player));
-            return;
+            Vector3 nextPos = player.TargetPosition + player.InputDirection;
+            player.SetTargetPosition(nextPos);
+            targetforward = player.GetPlayerToTargetFoward();
         }
-
-        if (player.CheckBounce(player.InputDirection, out RaycastHit bounceHit))
-        {
-            Monster target = bounceHit.collider.GetComponent<Monster>();
-            
-            if (target != null)
-            {
-                player.FSMMachine.ChangeState(new KnockbackState(player, -player.InputDirection, target));
-                return;
-            }
-        }
-
-        player.SetTargetPosition(nextPos);
     }
 
     public void Update()
     {
-        if (player.CheckBounce(player.InputDirection, out RaycastHit bounceHit))
-        {
-            Monster target = bounceHit.collider.GetComponent<Monster>();
+        CheckBounce();
 
-            if (target != null)
-            {
-                player.FSMMachine.ChangeState(new KnockbackState(player, -player.InputDirection, target));
-                return;
-            }
-        }
-
-        player.RotateTowardsDirection();
-
+        player.RotateTowardsDirection(targetforward);
         player.transform.position = Vector3.MoveTowards(
             player.transform.position,
             player.TargetPosition,
-            player.BaseMoveSpeed * Time.deltaTime);
+            player.CurrentMoveSpeed * Time.deltaTime);
 
 
         if (Vector3.Distance(player.transform.position, player.TargetPosition) < 0.01f)
         {
+            player.RotateInstantly(targetforward);
             player.transform.position = player.TargetPosition;
 
             if (player.InputDirection != Vector3.zero)
@@ -75,4 +57,32 @@ public class MoveState : IState
     }
 
     public void Exit() { }
+
+
+    public bool CheckBounce()
+    {
+        if (player.CheckBounce(player.InputDirection, out RaycastHit bounceHit))
+        {
+            Monster target = bounceHit.collider.GetComponent<Monster>();
+
+            if (target != null)
+            {
+                player.FSMMachine.ChangeState(new KnockbackState(player, -player.InputDirection, target));
+                return true;
+            }
+        }
+
+        return false;
+    }
+    public bool CheckWall()
+    {
+        if (player.CheckWall(player.InputDirection, out RaycastHit wallHit))
+        {
+            player.SetTargetPosition(player.transform.position);
+            player.RotateInstantly(player.InputDirection);
+            return true;
+        }
+
+        return false;
+    }
 }

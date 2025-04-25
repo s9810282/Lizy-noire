@@ -32,6 +32,7 @@ public class PlayerController : MonoBehaviour, IEffectTarget, IDamageAble
     [Tooltip("언제부터 착지 가능한가 0~1")][SerializeField] private float landingTime = 0.6f;
     [Tooltip("착지 성공 최소값")][SerializeField] private float landingMin = 1.2f;
     [Tooltip("착지 성공 최대값")][SerializeField] private float landingMax = 1.8f;
+    [Tooltip("원한다면 직접 그리기")][SerializeField] AnimationCurve curve;
     [Space(15f)]
     [SerializeField] bool isKnockedBack = false;
     [SerializeField] bool isTryLanding = false;
@@ -85,6 +86,8 @@ public class PlayerController : MonoBehaviour, IEffectTarget, IDamageAble
     {
         targetPosition = SnapToGrid(transform.position);
         transform.position = targetPosition;
+
+        UpdateSpeed();
 
         hp = maxHp;
 
@@ -163,6 +166,10 @@ public class PlayerController : MonoBehaviour, IEffectTarget, IDamageAble
     {
         targetPosition = SnapToGrid(worldPos);
     }
+    public void SetPlayerPosToTarget()
+    {
+        transform.position = targetPosition;
+    }   //SetTargetPosition 호출 후 사용
     public Vector3 SnapToGrid(Vector3 pos)
     {
         return new Vector3(
@@ -171,6 +178,12 @@ public class PlayerController : MonoBehaviour, IEffectTarget, IDamageAble
             Mathf.Round(pos.z)
         );
     }
+    public Vector3 GetPlayerToTargetFoward()
+    {
+        return targetPosition - SnapToGrid(transform.position);
+    }
+
+    
 
 
     public void RotateTowardsDirection()
@@ -238,6 +251,7 @@ public class PlayerController : MonoBehaviour, IEffectTarget, IDamageAble
         {
             Vector3 toPlayer = (transform.position - target.transform.position).normalized;
             duration = knockBackDuration * target.Data.monsterValue.bounceDistance;
+            distance = target.Data.monsterValue.bounceDistance;
 
             if (playerAttackType == EAttakcType.Blow)
             {
@@ -251,11 +265,12 @@ public class PlayerController : MonoBehaviour, IEffectTarget, IDamageAble
             {
                 if (!target.CheckShield(toPlayer))
                 {
+                    Debug.Log("Slash");
                     target.TakeDamage(9999);
                 }
                 else
                 {
-                    StartCoroutine(DoParabolaKnockback(direction, distance*2, 0.25f, duration));
+                    StartCoroutine(DoParabolaKnockback(direction, distance*2, 0.25f, duration / 2));
                 }
             }
         }
@@ -341,6 +356,7 @@ public class PlayerController : MonoBehaviour, IEffectTarget, IDamageAble
         if (effect == null)
             return;
 
+        
         statusEffectManager.AddEffect(effect);
     }
     
@@ -359,7 +375,8 @@ public class PlayerController : MonoBehaviour, IEffectTarget, IDamageAble
 
     void IEffectTarget.ModifyMoveSpeed(float factor)
     {
-        baseMoveSpeed += factor;
+        moveSpeedModifier += factor;
+        UpdateSpeed();
     }
     void IEffectTarget.TakeTickDamage(float value)
     {

@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   name: Ghost
   damage: 10
-  maxHp: 100
+  maxHp: 120
   speed: 95
   monsterValue:
     shieldDir: 3

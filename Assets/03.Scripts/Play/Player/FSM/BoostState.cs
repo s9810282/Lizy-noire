@@ -4,7 +4,7 @@ using UnityEngine.Rendering;
 public class BoostState : TimedState
 {
     Vector3 boostDir;
-
+    private Vector3 targetforward = Vector3.zero;
 
     public BoostState(PlayerController player, float duration, float damageValue = 0)
        : base(player, duration, damageValue)
@@ -18,18 +18,13 @@ public class BoostState : TimedState
         base.Enter();
 
         player.PlayerState = EPlayerState.Boost;
-     
+
+        if (CheckWall()) return;
+        CheckBounce();
+
         Vector3 nextPos = player.TargetPosition + boostDir;
         player.SetTargetPosition(nextPos);
-
-        if (player.CheckWall(boostDir, out _))
-        {
-            player.RotateInstantly(boostDir);
-            player.ResetInput();
-            return;
-        }
-
-        CheckBounce();
+        targetforward = player.GetPlayerToTargetFoward();
     }
 
     public override void Update()
@@ -38,25 +33,26 @@ public class BoostState : TimedState
 
         boostDir = player.InputDirection != Vector3.zero ? player.InputDirection : boostDir;
 
-        if(CheckWall()) return;
+        CheckWall();
         CheckBounce();
 
-        player.RotateTowardsDirection();
-
+        player.RotateTowardsDirection(targetforward);
         player.transform.position = Vector3.MoveTowards(
             player.transform.position,
             player.TargetPosition,
-            player.BaseMoveSpeed * Time.deltaTime);
+            player.CurrentMoveSpeed * Time.deltaTime);
 
 
         if (Vector3.Distance(player.transform.position, player.TargetPosition) < 0.01f)
         {
+            player.RotateInstantly(targetforward);
             player.transform.position = player.TargetPosition;
 
-            Vector3 nextPos = player.TargetPosition + boostDir;
+            if (CheckWall()) return;
+                 
+            Vector3 nextPos = player.transform.position + boostDir;
             player.SetTargetPosition(nextPos);
-
-            CheckBounce();
+            targetforward = player.GetPlayerToTargetFoward();
         }
     }
 
@@ -67,11 +63,9 @@ public class BoostState : TimedState
 
     public override void ExitToDefaultState()
     {
-        player.ResetInput();
-        player.SetTargetPosition(player.transform.position);
-
-        player.FSMMachine.ChangeState(new IdleState(player));
-        player.AddEffect(new ExhaustionBuff("Å»Áø", 2f, player, EStatusEffect.Exhaustion, player.BaseMoveSpeed, 25));
+        player.FSMMachine.ChangeState(new MoveState(player, true));
+        player.AddEffect(
+            new ExhaustionBuff("Å»Áø", 2f, player, EStatusEffect.Exhaustion, player.BaseMoveSpeed/2, 25));
     }
 
 
@@ -90,13 +84,12 @@ public class BoostState : TimedState
 
         return false;
     }
-
     public bool CheckWall()
     {
-        if (player.CheckWall(boostDir, out _))
+        if (player.CheckWall(boostDir, out RaycastHit wallHit))
         {
+            player.SetTargetPosition(player.transform.position);
             player.RotateInstantly(boostDir);
-            player.ResetInput();
             return true;
         }
 

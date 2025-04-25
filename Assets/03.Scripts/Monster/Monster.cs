@@ -25,14 +25,13 @@ public class Monster : MonoBehaviour, IDamageAble
 
     public void TakeDamage(float damage)
     {
-        hpBar.gameObject.SetActive(true);
-
         currentHP -= damage;
         hpBar.SetHP(currentHP, data.maxHp);
-
+        hpBar.HideHpBar(true);
 
         if (currentHP <= 0)
         {
+            hpBar.HideHpBar(false);
             Destroy(gameObject);
         }
     }
@@ -41,7 +40,7 @@ public class Monster : MonoBehaviour, IDamageAble
     {
         currentHP = data.maxHp;
         hpBar.SetHP(currentHP, data.maxHp);
-        hpBar.gameObject.SetActive(false);
+        hpBar.HideHpBar(false);
 
         AddShield();
     }

@@ -59,4 +59,10 @@ public class StatusEffectManager
     {
         return effectList.TryGetValue(type, out var effect) ? effect : null;
     }
+
+
+    public void CheckBoostorEXhaustion(StatusEffect effect)
+    {
+        //부스트와 탈진 상태는 공존 불가. 그에 따른 처리
+    }
 }
