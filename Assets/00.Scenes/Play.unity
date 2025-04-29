@@ -20030,11 +20030,11 @@ MonoBehaviour:
   moveSpeedModifier: 0
   currentMoveSpeed: 5
   rotateSpeed: 1080
-  knockBackDuration: 0.25
-  knockBackHeight: 1
+  knockBackDuration: 0.2
+  knockBackHeight: 2
   landingTime: 0.6
-  landingMin: 1.2
-  landingMax: 1.8
+  landingMin: 1
+  landingMax: 1.5
   curve:
     serializedVersion: 2
     m_Curve:
