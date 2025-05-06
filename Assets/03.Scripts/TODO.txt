@@ -1,12 +1,15 @@
 
-1. 경직 시 방향 회전 멈춤
-2. 부스트 갯수 및 그에 따른 속도 패치
+
+1. 벽에 부딪힐걸 아는 경우 duration 조정 필요함 DoParabolaKnockback 코루틴 안에 있는 내용을
+일부 밖으로 빼야할 필요가 있을 듯함
+
+2. 부스트 갯수 및 그에 따른 속도 패치 => 이거 나중에
 3. 아 몬스터 TakeDamage 정상화 하기 근데 MonsterData 가져와야하는데
-4. Boost 상태에서 경직 상태로 넘어갈 시 부스트가 남아있어 움직일 수 있는 이슈
 
+ 
+ 엥 속도 정상화가 안됬다고?
 
-
-StatusEffectData 적용시키기
+나중에 StatusEffectData 적용시키기
 
 
 

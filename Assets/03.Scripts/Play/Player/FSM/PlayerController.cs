@@ -23,9 +23,7 @@ public class PlayerController : MonoBehaviour, IEffectTarget, IDamageAble
     [SerializeField] private float moveSpeedModifier = 0f;
     [SerializeField] private float currentMoveSpeed = 5f;
     [SerializeField] private float rotateSpeed = 1080f;
-    [SerializeField] private float knockBackDuration = 0.25f;
-    [SerializeField] private float knockBackHeight = 1f;
-
+    
     [Space(15f)]
 
     [Header("Player KnockBack")]
@@ -33,6 +31,9 @@ public class PlayerController : MonoBehaviour, IEffectTarget, IDamageAble
     [Tooltip("착지 성공 최소값")][SerializeField] private float landingMin = 1.2f;
     [Tooltip("착지 성공 최대값")][SerializeField] private float landingMax = 1.8f;
     [Tooltip("원한다면 직접 그리기")][SerializeField] AnimationCurve curve;
+    [Space(15f)]
+    [SerializeField] private float knockBackDuration = 0.25f;
+    [SerializeField] private float knockBackHeight = 1f;
     [Space(15f)]
     [SerializeField] bool isKnockedBack = false;
     [SerializeField] bool isTryLanding = false;
@@ -104,6 +105,7 @@ public class PlayerController : MonoBehaviour, IEffectTarget, IDamageAble
     public void OnMove(InputAction.CallbackContext context)
     {
         if (IsKnockedBack) return;
+        //if (isDamageAble) return;
 
         Vector2 input = context.ReadValue<Vector2>();
 
@@ -239,41 +241,102 @@ public class PlayerController : MonoBehaviour, IEffectTarget, IDamageAble
     {
         if (IsKnockedBack) return;
 
+        IsKnockedBack = true;
+        isTryLanding = false;
+        isFalling = false;
+
+        distance = target.Data.monsterValue.bounceDistance;
+        duration = knockBackDuration * distance;
+        height = knockBackHeight;
+
+        KnockbackBeforeStatus = new ExhaustionBuff("경직", 1f, this, EStatusEffect.Exhaustion, baseMoveSpeed, 25);
+        KnockbackBeforeState = new IdleState(this);
+
+        Vector3 start = transform.position;
+        Vector3 end = SnapToGrid(start + direction * distance);
+
         if (isDamageAble)
         {
             ((IDamageAble)this).TakeDamage(0);
 
 
-            //랜덤방향 이지랄
-            StartCoroutine(DoParabolaKnockback(direction, 1f, height, duration));
+            distance = 1f;
+            //랜덤방향 근데 벽이 있는지 체크해야함
+            //direction = Vector3.zero;
+            
+            end = SnapToGrid(start + direction * distance);
+
+            //아직 막아두기
+            return;
         }
         else
         {
             Vector3 toPlayer = (transform.position - target.transform.position).normalized;
-            duration = knockBackDuration * target.Data.monsterValue.bounceDistance;
-            distance = target.Data.monsterValue.bounceDistance;
 
             if (playerAttackType == EAttakcType.Blow)
             {
                 target.RemoveShield(toPlayer);
                 target.TakeDamage(atk);
 
-                height = knockBackHeight;
-                StartCoroutine(DoParabolaKnockback(direction, distance, height, duration));
+                if (CheckWall(direction, out RaycastHit hit, distance)) //스턴
+                {
+                    Vector3 wallFront = SnapToGrid(hit.transform.position - direction);
+
+                    float b = Vector3.Distance(start, wallFront) + 1f;
+                    duration = b * knockBackDuration;
+                    end = wallFront;
+
+                    KnockbackBeforeStatus = new ExhaustionBuff("스턴", 2f, this, EStatusEffect.Exhaustion, baseMoveSpeed, 50);
+                }
+                else
+                {
+                    end = SnapToGrid(start + direction * distance);
+                }
             }
             else if(playerAttackType == EAttakcType.Slash)
             {
                 if (!target.CheckShield(toPlayer))
                 {
                     Debug.Log("Slash");
+
+                    IsKnockedBack = false;
                     target.TakeDamage(9999);
+
+                    ResetInput();
+                    fsmMachine.ChangeState(new IdleState(this));
+                    
+                    return;
                 }
                 else
                 {
-                    StartCoroutine(DoParabolaKnockback(direction, distance*2, 0.25f, duration / 2));
+                    isTryLanding = true;
+
+                    height = 0.25f;
+                    distance = distance * 2;
+                    duration = duration / 2;
+                    
+                    if (CheckWall(direction, out RaycastHit hit, distance)) //기절
+                    {
+                        Vector3 wallFront = SnapToGrid(hit.transform.position - direction);
+
+                        float b = Vector3.Distance(start, wallFront) + 1f;
+                        duration = b * knockBackDuration;
+                        end = wallFront;
+
+                        KnockbackBeforeStatus = new ExhaustionBuff("기절", 4f, this, EStatusEffect.Exhaustion, baseMoveSpeed, 100);
+                    }
+                    else // 스턴
+                    {
+                        end = SnapToGrid(start + direction * distance);
+                        KnockbackBeforeStatus = new ExhaustionBuff("스턴", 2f, this, EStatusEffect.Exhaustion, baseMoveSpeed, 50);
+                    }
+
                 }
             }
         }
+
+
+        StartCoroutine(DoParabolaKnockback(direction, distance, height, duration , start, end));
     }
 
 
@@ -281,46 +344,12 @@ public class PlayerController : MonoBehaviour, IEffectTarget, IDamageAble
     StatusEffect KnockbackBeforeStatus;
     IState KnockbackBeforeState;
 
-    private IEnumerator DoParabolaKnockback(Vector3 dir, float dist, float height, float duration)
+    private IEnumerator DoParabolaKnockback(Vector3 dir, float dist, float height, float duration, Vector3 start, Vector3 end)
     {
-        IsKnockedBack = true;
-        isTryLanding = false;
-        isFalling = false;
-
-        Vector3 start = transform.position;
-        Vector3 end = SnapToGrid(start + dir * dist);
-        float elapsed = 0f;
-
         ResetInput();
 
-        KnockbackBeforeStatus = new ExhaustionBuff("경직", 1f, this, EStatusEffect.Exhaustion, baseMoveSpeed, 25);
-        KnockbackBeforeState = new IdleState(this);
+        float elapsed = 0f;
 
-
-        if (playerAttackType == EAttakcType.Blow)
-        {
-            if (CheckWall(dir, out RaycastHit hit, dist)) //스턴
-            {
-                //isTryLanding = true;
-
-                end = SnapToGrid(hit.transform.position - dir);
-                KnockbackBeforeStatus = new ExhaustionBuff("스턴", 2f, this, EStatusEffect.Exhaustion, baseMoveSpeed, 50);
-            } 
-        }
-        else if (playerAttackType == EAttakcType.Slash)
-        {
-            isTryLanding = true;
-
-            if (CheckWall(dir, out RaycastHit hit, dist)) //기절
-            {
-                end = SnapToGrid(hit.transform.position - dir);
-                KnockbackBeforeStatus = new ExhaustionBuff("기절", 4f, this, EStatusEffect.Exhaustion, baseMoveSpeed, 100);
-            }
-            else // 스턴
-            {
-                KnockbackBeforeStatus = new ExhaustionBuff("스턴", 2f, this, EStatusEffect.Exhaustion, baseMoveSpeed, 50);
-            }
-        }
 
         while (elapsed < duration)
         {
@@ -341,13 +370,11 @@ public class PlayerController : MonoBehaviour, IEffectTarget, IDamageAble
 
         transform.position = end;
         targetPosition = transform.position;
-
-        yield return new WaitForEndOfFrame();
         IsKnockedBack = false;
 
-
         fsmMachine.ChangeState(KnockbackBeforeState);
-        AddEffect(KnockbackBeforeStatus);
+        statusEffectManager.CheckBoostorEXhaustion(KnockbackBeforeStatus);
+        AddEffect(KnockbackBeforeStatus);   
     }
 
 

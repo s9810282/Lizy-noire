@@ -63,6 +63,14 @@ public class StatusEffectManager
 
     public void CheckBoostorEXhaustion(StatusEffect effect)
     {
+        if(effect.eStatusEffect == EStatusEffect.Exhaustion)
+        {
+            if (effectList.ContainsKey(EStatusEffect.SpeedUp))
+            {
+                RemoveEffect(EStatusEffect.SpeedUp);
+            }
+
+        }
         //부스트와 탈진 상태는 공존 불가. 그에 따른 처리
     }
 }
