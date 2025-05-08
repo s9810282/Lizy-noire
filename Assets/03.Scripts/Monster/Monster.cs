@@ -52,6 +52,7 @@ public class Monster : MonoBehaviour, IDamageAble
 
 
 
+
     public void AddShield()
     {
         switch (data.monsterValue.shieldDir)
@@ -109,7 +110,6 @@ public class Monster : MonoBehaviour, IDamageAble
             return false;
         }
     }
-
     public void RemoveShield(Vector3 toPlayer)
     {
         RelativeDirection dir = GetRelativeDirection(toPlayer);

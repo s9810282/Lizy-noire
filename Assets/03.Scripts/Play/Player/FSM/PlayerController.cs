@@ -105,7 +105,11 @@ public class PlayerController : MonoBehaviour, IEffectTarget, IDamageAble
     public void OnMove(InputAction.CallbackContext context)
     {
         if (IsKnockedBack) return;
-        //if (isDamageAble) return;
+        if (currentMoveSpeed <= 0)
+        {
+            ResetInput();
+            return;
+        }
 
         Vector2 input = context.ReadValue<Vector2>();
 
@@ -137,7 +141,7 @@ public class PlayerController : MonoBehaviour, IEffectTarget, IDamageAble
 
         if (yPos > landingMax)  //경직
         {
-            Debug.Log("Bad");
+            Debug.Log("Bad Early");
             KnockbackBeforeStatus = new ExhaustionBuff("경직", 1f, this, EStatusEffect.Exhaustion, baseMoveSpeed, 25);
         }
         else if (yPos > landingMin) //부스트
@@ -150,7 +154,7 @@ public class PlayerController : MonoBehaviour, IEffectTarget, IDamageAble
         }
         else //경직
         {
-            Debug.Log("Bad");
+            Debug.Log("Bad Late");
             KnockbackBeforeStatus = new ExhaustionBuff("경직", 1f, this, EStatusEffect.Exhaustion, baseMoveSpeed, 25);
         }
     }
@@ -191,7 +195,11 @@ public class PlayerController : MonoBehaviour, IEffectTarget, IDamageAble
     public void RotateTowardsDirection()
     {
         if (InputDirection == Vector3.zero) return;
-        if (baseMoveSpeed <= 0) return;
+        if (currentMoveSpeed <= 0)
+        {
+            ResetInput();
+            return;
+        }
 
         float yRotation = DirToYRotation(InputDirection);
         Quaternion targetRotation = Quaternion.Euler(0f, yRotation, 0f);
@@ -200,6 +208,11 @@ public class PlayerController : MonoBehaviour, IEffectTarget, IDamageAble
     public void RotateTowardsDirection(Vector3 dir)
     {
         if (dir == Vector3.zero) return;
+        if (currentMoveSpeed <= 0)
+        {
+            ResetInput();
+            return;
+        }
 
         float yRotation = DirToYRotation(dir);
         Quaternion targetRotation = Quaternion.Euler(0f, yRotation, 0f);
@@ -208,6 +221,11 @@ public class PlayerController : MonoBehaviour, IEffectTarget, IDamageAble
     public void RotateInstantly(Vector3 dir)
     {
         if (dir == Vector3.zero) return;
+        if (currentMoveSpeed <= 0) 
+        { 
+            ResetInput(); 
+            return; 
+        }
 
         float yRotation = DirToYRotation(dir);
         Quaternion targetRotation = Quaternion.Euler(0f, yRotation, 0f);
@@ -389,6 +407,7 @@ public class PlayerController : MonoBehaviour, IEffectTarget, IDamageAble
     
     void IDamageAble.TakeDamage(float damage)
     {
+        //return 할게 아니라 isDamageAble이 false 라면 knockback으로 진행
         if (!isDamageAble) return;
 
         hp -= damage;

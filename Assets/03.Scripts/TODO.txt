@@ -1,7 +1,8 @@
 
 
-1. 벽에 부딪힐걸 아는 경우 duration 조정 필요함 DoParabolaKnockback 코루틴 안에 있는 내용을
-일부 밖으로 빼야할 필요가 있을 듯함
+1. 몬스터가 플레이어에게 먼저 다가온다면 IDamageAble TakeDamage 호출, 상태에 따른 처리
+
+A* 몬스터 길찾기 베이스로 진행
 
 2. 부스트 갯수 및 그에 따른 속도 패치 => 이거 나중에
 3. 아 몬스터 TakeDamage 정상화 하기 근데 MonsterData 가져와야하는데

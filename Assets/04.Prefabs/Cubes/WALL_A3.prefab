@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 900431257781403919}
   - component: {fileID: 7137790616815161879}
   - component: {fileID: -5017102834289039286}
+  - component: {fileID: 1779037127078334769}
   m_Layer: 8
   m_Name: WALL_A3
   m_TagString: Wall
@@ -121,3 +122,23 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.021659845, y: 0.021659842, z: 0.020443015}
   m_Center: {x: 0, y: 0, z: -0.00022150944}
+--- !u!114 &1779037127078334769
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1396113895559644649}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e3fdca004f2d45fe8abbed571a8abd5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SerializedVersion: 0
+  m_OverrideArea: 0
+  m_Area: 0
+  m_OverrideGenerateLinks: 0
+  m_GenerateLinks: 0
+  m_IgnoreFromBuild: 0
+  m_ApplyToChildren: 1
+  m_AffectedAgents: ffffffff
