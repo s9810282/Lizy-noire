@@ -1,21 +1,49 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Behavior.GraphFramework;
+using Unity.VisualScripting.Dependencies.Sqlite;
 using UnityEngine;
 
-public class PathFinder : MonoBehaviour
+[System.Serializable]
+public class PathFinder
 {
-    [SerializeField] PathFinding pathFinding;
-    [SerializeField] Vector3Int mapMinSize;
-    [SerializeField] Vector3Int mapMaxSize;
+    private static PathFinder instance;
+    public static PathFinder Instance
+    {
+        get
+        {
+            if (instance == null)
+            {
+                instance = new PathFinder();
+            }
 
-    // Start is called before the first frame update
-    void Start()
+            return instance;
+        }
+    }
+
+    public MapData mapData;
+
+    public PathFinding pathFinding;
+    public Vector3Int mapMinSize = new Vector3Int(-15, 0, -8);
+    public Vector3Int mapMaxSize = new Vector3Int(6, 0, 11);
+
+    public void Init(MapData map)
+    {
+        mapData = map;
+        mapMinSize = mapData.mapMinSize;
+        mapMaxSize = mapData.mapMaxSize;
+
+        pathFinding = new PathFinding
+            ((int)(mapMaxSize.x - mapMinSize.x) + 1, (int)(mapMaxSize.z - mapMinSize.z) + 1, 1f, mapMinSize);
+    }
+
+    public void Test()
     {
         pathFinding = new PathFinding
             ((int)(mapMaxSize.x - mapMinSize.x) + 1, (int)(mapMaxSize.z - mapMinSize.z) + 1, 1f, mapMinSize);
-        
 
-        List<PathNode> path = pathFinding.FindPath(-15, -8,  6, 11);
+
+        List<PathNode> path = pathFinding.FindPath(-15, -8, 6, 11);
 
         if (path != null)
         {
@@ -26,10 +54,16 @@ public class PathFinder : MonoBehaviour
             {
                 Debug.Log(path[i].worldPosition.x + ", " + path[i].worldPosition.z);
 
-                Debug.DrawLine(new Vector3(path[i].worldPosition.x, 2, path[i].worldPosition.z) * 1f + Vector3.one * 0f, 
+                Debug.DrawLine(new Vector3(path[i].worldPosition.x, 2, path[i].worldPosition.z) * 1f + Vector3.one * 0f,
                     new Vector3(path[i + 1].worldPosition.x, 2, path[i + 1].worldPosition.z) * 1f + Vector3.one * 0f, Color.red, 100f);
             }
         }
+    }
+
+    public List<PathNode> GetPathNodes(Vector3 startPos, Vector3 endPos)
+    {
+        List<PathNode> path = pathFinding.FindPath((int)startPos.x, (int)startPos.y, (int)endPos.x, (int)endPos.y);
+        return path;
     }
 }
 

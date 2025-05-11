@@ -63,7 +63,8 @@ public class MapTile
 public class MapData : ScriptableObject
 {
     public string stageName;
-    public Vector2 mapSize;
+    public Vector3Int mapMinSize;
+    public Vector3Int mapMaxSize;
 
     public List<MapTile> tiles = new List<MapTile>();
     public List<MapTile> bgTiles = new List<MapTile>();

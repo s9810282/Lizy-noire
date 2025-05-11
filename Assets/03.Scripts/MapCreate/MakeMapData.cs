@@ -82,6 +82,9 @@ public class MakeMapData : MonoBehaviour
             }
         }
 
+        mapData.mapMinSize = new Vector3Int(startPos.x, 0, startPos.y);
+        mapData.mapMaxSize = new Vector3Int(endPos.x, 0, endPos.y);
+
 #if UNITY_EDITOR
         EditorUtility.SetDirty(mapData);
         AssetDatabase.SaveAssets();

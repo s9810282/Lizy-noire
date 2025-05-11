@@ -13,7 +13,8 @@ MonoBehaviour:
   m_Name: MapData
   m_EditorClassIdentifier: 
   stageName: Test
-  mapSize: {x: 0, y: 0}
+  mapMinSize: {x: -15, y: 0, z: -8}
+  mapMaxSize: {x: 6, y: 0, z: 11}
   tiles:
   - TileType: 5
     x: -15
