@@ -1,16 +1,4 @@
-﻿/* 
-    ------------------- Code Monkey -------------------
-
-    Thank you for downloading this package
-    I hope you find it useful in your projects
-    If you have any questions let me know
-    Cheers!
-
-               unitycodemonkey.com
-    --------------------------------------------------
- */
-
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -40,30 +28,8 @@ public class Grid<TGridObject> {
 
         gridArray = new TGridObject[width, height];
 
-       
-        //MapScale 50
-        //Map Size 10*10
-        //CellSize 5
-        //Offset = CellSize / 2
-
-        //지금 PathNode x, y 값에 world 상의 x,z 값을 넣어야함 => 이게 아니 PathNode에 추가로 worldPos 변수 추가
-
-        //start   -22.5 + 5*x 
-
-        // orginPos.x + 2.5 + cellSize * x
-
-        //왼쪽 맨아래 칸이 -22.5, -22.5 오른쪽 맨위가 22.5 ,22.5
-
-
         float originX = originPosition.x;
         float originZ = originPosition.z;
-
-        //////DebugTool.Log("OriginX : " + originX);
-        ////DebugTool.Log("OriginZ : " + originZ);
-
-        //offset = (cellSize / 2);
-
-        ////DebugTool.Log("Offset : " + offset);
 
         float tmpX = 0;
         float tmpZ = 0;

@@ -51,6 +51,11 @@ public class Monster : MonoBehaviour, IDamageAble
     }
 
 
+    public void Move()
+    {
+
+    }
+
 
 
     public void AddShield()

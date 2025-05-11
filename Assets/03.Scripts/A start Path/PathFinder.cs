@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Unity.Behavior.GraphFramework;
 using Unity.VisualScripting.Dependencies.Sqlite;
 using UnityEngine;
+using UnityEngine.Playables;
 
 [System.Serializable]
 public class PathFinder
@@ -42,7 +43,6 @@ public class PathFinder
         pathFinding = new PathFinding
             ((int)(mapMaxSize.x - mapMinSize.x) + 1, (int)(mapMaxSize.z - mapMinSize.z) + 1, 1f, mapMinSize);
 
-
         List<PathNode> path = pathFinding.FindPath(-15, -8, 6, 11);
 
         if (path != null)
@@ -64,6 +64,38 @@ public class PathFinder
     {
         List<PathNode> path = pathFinding.FindPath((int)startPos.x, (int)startPos.y, (int)endPos.x, (int)endPos.y);
         return path;
+    }
+
+
+    public List<PathNode> GetReachableNodes(PathNode startNode, int maxCost, int minCost = 0)
+    {
+        var open = new Queue<PathNode>();
+        var visited = new Dictionary<PathNode, int>();
+        var reachable = new List<PathNode>();
+
+        open.Enqueue(startNode);
+        visited[startNode] = 0;
+
+        while (open.Count > 0)
+        {
+            var current = open.Dequeue();
+            int currentCost = visited[current];
+            reachable.Add(current);
+
+            foreach (var neighbor in pathFinding.GetNeighbourList(current))
+            {
+                int costToNeighbor = currentCost + pathFinding.CaculateDistance(current, neighbor);
+
+                if (costToNeighbor <= maxCost && costToNeighbor >= minCost &&
+                    (!visited.ContainsKey(neighbor) || costToNeighbor < visited[neighbor]))
+                {
+                    visited[neighbor] = costToNeighbor;
+                    open.Enqueue(neighbor);
+                }
+            }
+        }
+
+        return reachable;
     }
 }
 

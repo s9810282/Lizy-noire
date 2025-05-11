@@ -8194,6 +8194,7 @@ MonoBehaviour:
   - rid: 7370562101235155327
   - rid: 7370562101235155658
   - rid: 7370562101235155659
+  - rid: 7370562164888437334
   m_IsInitialised: 0
   m_IsStarted: 0
   references:
@@ -8213,7 +8214,7 @@ MonoBehaviour:
         GUID:
           m_Value0: 2452902052543949408
           m_Value1: 16962951685030473070
-        Name: Radius
+        Name: SearchRadius
         m_Value: 2
     - rid: 7370562101235155659
       type: {class: 'BlackboardVariable`1[[System.Int32, mscorlib]]', ns: Unity.Behavior, asm: Unity.Behavior}
@@ -8223,6 +8224,14 @@ MonoBehaviour:
           m_Value1: 15603949874292031956
         Name: LayerNum
         m_Value: 6
+    - rid: 7370562164888437334
+      type: {class: 'BlackboardVariable`1[[Monster, Assembly-CSharp]]', ns: Unity.Behavior, asm: Unity.Behavior}
+      data:
+        GUID:
+          m_Value0: 6570648796642893424
+          m_Value1: 10266010997647452324
+        Name: SelfMonster
+        m_Value: {fileID: 234010612}
 --- !u!1 &235444094
 GameObject:
   m_ObjectHideFlags: 0
@@ -56738,13 +56747,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 281123388e0b033469633d596529a756, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pathFinder:
-    pathFinding:
-      originOffeset: {x: 0, y: 0, z: 0}
-      offsetWidth: 0
-      offsetHeight: 0
-    mapMinSize: {x: -15, y: 0, z: -8}
-    mapMaxSize: {x: 6, y: 0, z: 11}
 --- !u!1 &1565985309
 GameObject:
   m_ObjectHideFlags: 0
