@@ -43,7 +43,7 @@ public class PathFinding
         endX -= originOffeset.x;
         endY -= originOffeset.z;
 
-        Debug.Log(startX + " " + startY);
+        //Debug.Log(startX + " " + startY);
         
         PathNode startNode = grid.GetGridObject(startX, startY);
         PathNode endNode = grid.GetGridObject(endX, endY);
@@ -51,7 +51,6 @@ public class PathFinding
         openList = new List<PathNode> { startNode };
         closedList = new List<PathNode>(); //이거 여기서 미리 추가해주기 MapLoader에서 벽들값을 가져와서
         closedList.AddRange(mapClosedList);
-
 
         Debug.Log("Open List :  " + openList.Count);
         Debug.Log("Closed List :  " + closedList.Count);

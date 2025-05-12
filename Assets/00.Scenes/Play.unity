@@ -8257,7 +8257,7 @@ MonoBehaviour:
           m_Value0: 13314632698344384951
           m_Value1: 8750955076841317081
         Name: PatrolRange
-        m_Value: 100
+        m_Value: 150
 --- !u!1 &235444094
 GameObject:
   m_ObjectHideFlags: 0

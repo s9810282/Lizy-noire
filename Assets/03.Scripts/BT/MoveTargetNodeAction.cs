@@ -12,7 +12,6 @@ public partial class MoveTargetNodeAction : Action
 
     protected override Status OnStart()
     {
-        Monster.Value.FindPath();
         return Status.Running;
     }
 
@@ -23,6 +22,7 @@ public partial class MoveTargetNodeAction : Action
 
     protected override void OnEnd()
     {
+
     }
 }
 

@@ -56,6 +56,9 @@ public class Monster : MonoBehaviour, IDamageAble
         hpBar.SetHP(currentHP, data.maxHp);
         hpBar.HideHpBar(false);
 
+        nextTargetNode = new PathNode();
+        nextTargetNode.worldPosition = transform.position;
+
         AddShield();
     }
 
@@ -82,34 +85,9 @@ public class Monster : MonoBehaviour, IDamageAble
 
     public void UpdateTarget()
     {
-        pathNodes.Remove(nextTargetNode);
-        nextTargetNode = pathNodes[0];
+        currentMovePathCount++;
+        nextTargetNode = pathNodes[currentMovePathCount];
     }
-
-    public void FindPath()
-    {
-        PathNode current = PathFinder.Instance.pathFinding.grid.GetGridObject3D(transform.position);
-        pathNodes = PathFinder.Instance.pathFinding.FindPath((int)current.worldPosition.x, (int)current.worldPosition.z,
-            (int)targetNode.worldPosition.x, (int)targetNode.worldPosition.z);
-
-        Debug.Log(current.worldPosition);
-        Debug.Log(targetNode.worldPosition);
-
-        if (pathNodes != null)
-        {
-            for (int i = 0; i < pathNodes.Count - 1; i++)
-            {
-                Debug.Log(pathNodes[i].worldPosition.x + ", " + pathNodes[i].worldPosition.z);
-
-                Debug.DrawLine(new Vector3(pathNodes[i].worldPosition.x, 2, pathNodes[i].worldPosition.z) * 1f + Vector3.one * 0f,
-                    new Vector3(pathNodes[i + 1].worldPosition.x, 2, pathNodes[i + 1].worldPosition.z) * 1f + Vector3.one * 0f, Color.red, 100f);
-            }
-        }
-
-        currentMovePathCount = 0;
-        nextTargetNode = pathNodes[0];
-    }
-
     public void RotateTowardsDirection()
     {
         Vector3 targetDir = (nextTargetNode.worldPosition - transform.position).normalized;
@@ -117,16 +95,30 @@ public class Monster : MonoBehaviour, IDamageAble
 
         Quaternion targetRotation = Quaternion.LookRotation(targetDir);
         transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 100f);
-        //transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, 10f * Time.deltaTime);
     }
-    private float DirToYRotation(Vector3 dir)
+
+
+    public void FindPath()
     {
-        if (dir == Vector3.forward) return 0f;
-        if (dir == Vector3.right) return 90f;
-        if (dir == Vector3.back) return 180f;
-        if (dir == Vector3.left) return 270f;
-        return 0f;
+        PathNode current = PathFinder.Instance.pathFinding.grid.GetGridObject3D(nextTargetNode.worldPosition);
+        pathNodes = PathFinder.Instance.pathFinding.FindPath((int)current.worldPosition.x, (int)current.worldPosition.z,
+            (int)targetNode.worldPosition.x, (int)targetNode.worldPosition.z);
+
+        currentMovePathCount = -1;
+        
+        if (pathNodes != null)
+        {
+            for (int i = 0; i < pathNodes.Count - 1; i++)
+            {
+                //Debug.Log(pathNodes[i].worldPosition.x + ", " + pathNodes[i].worldPosition.z);
+
+                Debug.DrawLine(new Vector3(pathNodes[i].worldPosition.x, 2, pathNodes[i].worldPosition.z) * 1f + Vector3.one * 0f,
+                    new Vector3(pathNodes[i + 1].worldPosition.x, 2, pathNodes[i + 1].worldPosition.z) * 1f + Vector3.one * 0f, Color.red, 100f);
+            }
+        }
     }
+
+
 
     #region Shield
 

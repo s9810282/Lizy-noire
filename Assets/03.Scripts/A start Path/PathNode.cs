@@ -20,7 +20,7 @@ public class PathNode
     public PathNode cameFromNode;
 
 
-
+    public PathNode() { }
     public PathNode(Grid<PathNode> grid, int x, int y, Vector3 pos, bool isWalkable = true)
     {
         this.grid = grid;

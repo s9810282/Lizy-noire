@@ -6,12 +6,12 @@ using Action = Unity.Behavior.Action;
 using Unity.Properties;
 
 [Serializable, GeneratePropertyBag]
-[NodeDescription(name: "FindPatrolPos", story: "[Self] [Pos] [Range]", category: "Action", id: "763fd034b1fe3bd66b8dcdb3999b3555")]
+[NodeDescription(name: "FindPatrolPos", story: "[Self] [Range]", category: "Action", id: "763fd034b1fe3bd66b8dcdb3999b3555")]
 public partial class FindPatrolPosAction : Action
 {
     [SerializeReference] public BlackboardVariable<Monster> Self;
-    [SerializeReference] public BlackboardVariable<Vector3Int> Pos;
     [SerializeReference] public BlackboardVariable<int> Range;
+    
     protected override Status OnStart()
     {
         Debug.Log("Find Patrol Pos");
@@ -21,6 +21,7 @@ public partial class FindPatrolPosAction : Action
         PathNode targetNode = nodes[UnityEngine.Random.Range(0, nodes.Count)];
 
         Self.Value.TargetNode = targetNode;
+        Self.Value.FindPath();
 
         return Status.Running;
     }

@@ -66,6 +66,8 @@ public class PathFinder
 
     public void SetClosedList()
     {
+        pathFinding.mapClosedList = new List<PathNode>();
+
         foreach (MapTile item in mapData.tiles)
         {
             if (item == null) continue;
@@ -73,6 +75,8 @@ public class PathFinder
 
             PathNode current = pathFinding.grid.GetGridObject3D(new Vector3(item.x, 1, item.z));
             current.isWalkable = false;
+
+            pathFinding.mapClosedList.Add(current);
         }
     }
 
