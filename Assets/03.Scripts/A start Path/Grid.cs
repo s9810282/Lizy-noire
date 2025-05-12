@@ -42,12 +42,13 @@ public class Grid<TGridObject> {
             for (int y = 0; y < gridArray.GetLength(1); y++) {
             
                 tmpZ = originZ + offset + cellSize * y;
-                gridArray[x, y] = createGridObject(this, x, y, new Vector3(tmpX, 0, tmpZ));
+                gridArray[x, y] = createGridObject(this, x, y, new Vector3(tmpX, 1, tmpZ));
             }
         }
 
 
         bool showDebug = true;
+
         if (showDebug) {
             TextMesh[,] debugTextArray = new TextMesh[width, height];
 

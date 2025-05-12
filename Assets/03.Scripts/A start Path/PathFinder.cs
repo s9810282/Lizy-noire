@@ -36,6 +36,9 @@ public class PathFinder
 
         pathFinding = new PathFinding
             ((int)(mapMaxSize.x - mapMinSize.x) + 1, (int)(mapMaxSize.z - mapMinSize.z) + 1, 1f, mapMinSize);
+
+
+        SetClosedList();
     }
 
     public void Test()
@@ -43,22 +46,36 @@ public class PathFinder
         pathFinding = new PathFinding
             ((int)(mapMaxSize.x - mapMinSize.x) + 1, (int)(mapMaxSize.z - mapMinSize.z) + 1, 1f, mapMinSize);
 
-        List<PathNode> path = pathFinding.FindPath(-15, -8, 6, 11);
+        //List<PathNode> path = pathFinding.FindPath(-15, -8, 6, 11);
 
-        if (path != null)
+        //if (path != null)
+        //{
+        //    Debug.DrawLine(new Vector3(mapMinSize.x, 2, mapMinSize.z) * 1f + Vector3.one * 0f,
+        //         new Vector3(path[0].worldPosition.x, 2, path[0].worldPosition.z) * 1f + Vector3.one * 0f, Color.red, 100f);
+
+        //    for (int i = 0; i < path.Count - 1; i++)
+        //    {
+        //        Debug.Log(path[i].worldPosition.x + ", " + path[i].worldPosition.z);
+
+        //        Debug.DrawLine(new Vector3(path[i].worldPosition.x, 2, path[i].worldPosition.z) * 1f + Vector3.one * 0f,
+        //            new Vector3(path[i + 1].worldPosition.x, 2, path[i + 1].worldPosition.z) * 1f + Vector3.one * 0f, Color.red, 100f);
+        //    }
+        //}
+    }
+
+
+    public void SetClosedList()
+    {
+        foreach (MapTile item in mapData.tiles)
         {
-            Debug.DrawLine(new Vector3(mapMinSize.x, 2, mapMinSize.z) * 1f + Vector3.one * 0f,
-                 new Vector3(path[0].worldPosition.x, 2, path[0].worldPosition.z) * 1f + Vector3.one * 0f, Color.red, 100f);
+            if (item == null) continue;
+            if (item.TileType == ETileType.None) continue;
 
-            for (int i = 0; i < path.Count - 1; i++)
-            {
-                Debug.Log(path[i].worldPosition.x + ", " + path[i].worldPosition.z);
-
-                Debug.DrawLine(new Vector3(path[i].worldPosition.x, 2, path[i].worldPosition.z) * 1f + Vector3.one * 0f,
-                    new Vector3(path[i + 1].worldPosition.x, 2, path[i + 1].worldPosition.z) * 1f + Vector3.one * 0f, Color.red, 100f);
-            }
+            PathNode current = pathFinding.grid.GetGridObject3D(new Vector3(item.x, 1, item.z));
+            current.isWalkable = false;
         }
     }
+
 
     public List<PathNode> GetPathNodes(Vector3 startPos, Vector3 endPos)
     {
@@ -80,13 +97,17 @@ public class PathFinder
         {
             var current = open.Dequeue();
             int currentCost = visited[current];
-            reachable.Add(current);
+
+            if (currentCost >= minCost)
+                reachable.Add(current);
 
             foreach (var neighbor in pathFinding.GetNeighbourList(current))
             {
+                if (neighbor == null || !neighbor.isWalkable) continue;
+
                 int costToNeighbor = currentCost + pathFinding.CaculateDistance(current, neighbor);
 
-                if (costToNeighbor <= maxCost && costToNeighbor >= minCost &&
+                if (costToNeighbor <= maxCost &&
                     (!visited.ContainsKey(neighbor) || costToNeighbor < visited[neighbor]))
                 {
                     visited[neighbor] = costToNeighbor;

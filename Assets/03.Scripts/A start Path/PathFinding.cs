@@ -18,6 +18,9 @@ public class PathFinding
     public int offsetWidth;
     public int offsetHeight;
 
+
+    public List<PathNode> mapClosedList = new List<PathNode>();
+
     public PathFinding(int width, int heigh, float cellSize, Vector3Int originPos)
     {
         offsetWidth = width;
@@ -46,7 +49,9 @@ public class PathFinding
         PathNode endNode = grid.GetGridObject(endX, endY);
 
         openList = new List<PathNode> { startNode };
-        closedList = new List<PathNode>();
+        closedList = new List<PathNode>(); //이거 여기서 미리 추가해주기 MapLoader에서 벽들값을 가져와서
+        closedList.AddRange(mapClosedList);
+
 
         Debug.Log("Open List :  " + openList.Count);
         Debug.Log("Closed List :  " + closedList.Count);
