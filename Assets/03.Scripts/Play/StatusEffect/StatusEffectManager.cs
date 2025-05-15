@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 
 
@@ -8,18 +9,27 @@ using UnityEngine;
 public class StatusEffectManager
 {
     [SerializeField] Dictionary<EStatusEffect, StatusEffect> effectList = new Dictionary<EStatusEffect, StatusEffect>();
+    [SerializeField] List<EStatusEffect> InsfectorList = new List<EStatusEffect>();
 
     public void AddEffect(StatusEffect effect)
     {
+        if (effect == null) return;
+
         EStatusEffect eStatus = effect.eStatusEffect;
+        
 
         if (effectList.ContainsKey(eStatus))
         {
             RemoveEffect(eStatus);
+            InsfectorList.Remove(eStatus);
         }
+
+        CheckBoostorExhaustion(effect.eStatusEffect);
+        CheckInvincibble();
 
         effect.ApplyEffect();
         effectList.Add(eStatus, effect);
+        InsfectorList.Add(eStatus);
     }
     
     public void Update()
@@ -37,6 +47,7 @@ public class StatusEffectManager
             if (effect.Duration <= 0)
             {
                 effect.RemoveEffect();
+                InsfectorList.Remove(key);
                 effectList.Remove(key);
             }
         }
@@ -47,12 +58,8 @@ public class StatusEffectManager
         if (!effectList.ContainsKey(type)) return;
 
         effectList[type].RemoveEffect();
+        InsfectorList.Remove(type);
         effectList.Remove(type);
-    }
-
-    public bool HasEffect(EStatusEffect type)
-    {
-        return effectList.ContainsKey(type);
     }
 
     public StatusEffect GetEffect(EStatusEffect type)
@@ -61,16 +68,28 @@ public class StatusEffectManager
     }
 
 
-    public void CheckBoostorEXhaustion(StatusEffect effect)
+    public void CheckBoostorExhaustion(EStatusEffect effect)
     {
-        if(effect.eStatusEffect == EStatusEffect.Exhaustion)
+        if(effect == EStatusEffect.Exhaustion)
         {
             if (effectList.ContainsKey(EStatusEffect.SpeedUp))
             {
                 RemoveEffect(EStatusEffect.SpeedUp);
             }
-
         }
         //부스트와 탈진 상태는 공존 불가. 그에 따른 처리
     }
+    public void CheckInvincibble()
+    {
+        if (effectList.ContainsKey(EStatusEffect.Exhaustion))
+        {
+            RemoveEffect(EStatusEffect.Exhaustion);
+        }
+    }
+
+
+    public bool CheckStatus(EStatusEffect eStatus)
+    {
+        return effectList.ContainsKey(eStatus);
+    } 
 }

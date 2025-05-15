@@ -5,12 +5,11 @@ public enum EPlayerState
 { 
     None = 0,
 
-    Exhaustion, //탈진
-    Stiffness, //경직
-    Idle, //스턴
-    Move, //기절
+    Exhaustion, 
+    Idle, 
+    Move, 
     KnockBack,
-    Boost,
+    Boost
 }
 
 

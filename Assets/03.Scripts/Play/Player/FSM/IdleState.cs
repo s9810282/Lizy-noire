@@ -16,20 +16,20 @@ public class IdleState : IState
 
     public void Update()
     {
-        if (player.CheckBounce(player.InputDirection, out RaycastHit bounceHit))
-        {
-            Monster target = bounceHit.collider.GetComponent<Monster>();
+        //if (player.RaycaseBounce(player.InputDirection, out RaycastHit bounceHit))
+        //{
+        //    Monster target = bounceHit.collider.GetComponent<Monster>();
 
-            if (target != null)
-            {
-                player.FSMMachine.ChangeState(new KnockbackState(player, -player.InputDirection, target));
-                return;
-            }            
-        }
+        //    if (target != null)
+        //    {
+        //        player.FSMMachine.ChangeState(new KnockbackState(player, -player.InputDirection, target));
+        //        return;
+        //    }            
+        //}
 
         if (player.InputDirection != Vector3.zero)
         {
-            if (player.CheckWall(player.InputDirection, out _))
+            if (player.RaycaseWall(player.InputDirection, out _))
             {
                 player.RotateInstantly(player.InputDirection);
                 player.ResetInput();

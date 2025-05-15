@@ -14,7 +14,7 @@ public partial class UpdateChasePathAction : Action
     [SerializeReference] public BlackboardVariable<Vector3> OriginPos;
     protected override Status OnStart()
     {
-        Debug.Log("Update Path");
+        //Debug.Log("Update Path");
 
         int x = Mathf.FloorToInt(TargetPos.Value.transform.position.x);
         int y = 1;

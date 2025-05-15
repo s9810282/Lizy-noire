@@ -8194,6 +8194,12 @@ MonoBehaviour:
     fCost: 0
     isWalkable: 0
   pathNodes: []
+  wallLayer:
+    serializedVersion: 2
+    m_Bits: 256
+  bounceLayer:
+    serializedVersion: 2
+    m_Bits: 64
 --- !u!114 &234010613
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -20375,7 +20381,6 @@ MonoBehaviour:
   isKnockedBack: 0
   isTryLanding: 0
   isFalling: 0
-  isDamageAble: 0
   wallLayer:
     serializedVersion: 2
     m_Bits: 256
@@ -23171,18 +23176,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6b34438a271fb8e40aae7550eb4bf928, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 5
-  rotateSpeed: 1080
-  targetPos: {x: 0, y: 0, z: 0}
-  inputDir: {x: 0, y: 0, z: 0}
-  isMoving: 0
-  isKnockedBack: 0
-  wallLayer:
-    serializedVersion: 2
-    m_Bits: 0
-  bounceLayer:
-    serializedVersion: 2
-    m_Bits: 0
 --- !u!114 &621001035
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -26593,6 +26586,12 @@ MonoBehaviour:
     fCost: 0
     isWalkable: 0
   pathNodes: []
+  wallLayer:
+    serializedVersion: 2
+    m_Bits: 0
+  bounceLayer:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!1 &731088604
 GameObject:
   m_ObjectHideFlags: 0

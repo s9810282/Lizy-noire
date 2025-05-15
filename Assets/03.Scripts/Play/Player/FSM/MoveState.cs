@@ -30,14 +30,14 @@ public class MoveState : IState
 
     public void Update()
     {
-        CheckBounce();
-
+        
         player.RotateTowardsDirection(targetforward);
         player.transform.position = Vector3.MoveTowards(
             player.transform.position,
             player.TargetPosition,
             player.CurrentMoveSpeed * Time.deltaTime);
 
+        CheckBounce();
 
         if (Vector3.Distance(player.transform.position, player.TargetPosition) < 0.01f)
         {
@@ -61,7 +61,7 @@ public class MoveState : IState
 
     public bool CheckBounce()
     {
-        if (player.CheckBounce(player.InputDirection, out RaycastHit bounceHit))
+        if (player.RaycaseBounce(player.InputDirection, out RaycastHit bounceHit))
         {
             Monster target = bounceHit.collider.GetComponent<Monster>();
 
@@ -76,7 +76,7 @@ public class MoveState : IState
     }
     public bool CheckWall()
     {
-        if (player.CheckWall(player.InputDirection, out RaycastHit wallHit))
+        if (player.RaycaseWall(player.InputDirection, out RaycastHit wallHit))
         {
             player.SetTargetPosition(player.transform.position);
             player.RotateInstantly(player.InputDirection);

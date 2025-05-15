@@ -71,7 +71,7 @@ public class BoostState : TimedState
 
     public bool CheckBounce()
     {
-        if (player.CheckBounce(boostDir, out RaycastHit bounceHit))
+        if (player.RaycaseBounce(boostDir, out RaycastHit bounceHit))
         {
             Monster target = bounceHit.collider.GetComponent<Monster>();
 
@@ -86,7 +86,7 @@ public class BoostState : TimedState
     }
     public bool CheckWall()
     {
-        if (player.CheckWall(boostDir, out RaycastHit wallHit))
+        if (player.RaycaseWall(boostDir, out RaycastHit wallHit))
         {
             player.SetTargetPosition(player.transform.position);
             player.RotateInstantly(boostDir);

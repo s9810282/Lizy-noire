@@ -52,8 +52,8 @@ public class PathFinding
         closedList = new List<PathNode>(); //이거 여기서 미리 추가해주기 MapLoader에서 벽들값을 가져와서
         closedList.AddRange(mapClosedList);
 
-        Debug.Log("Open List :  " + openList.Count);
-        Debug.Log("Closed List :  " + closedList.Count);
+        //Debug.Log("Open List :  " + openList.Count);
+        //Debug.Log("Closed List :  " + closedList.Count);
 
         for (int x = 0; x < grid.GetWidth(); x++)
         {

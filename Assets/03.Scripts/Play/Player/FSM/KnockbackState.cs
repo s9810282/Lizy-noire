@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class KnockbackState : IState
@@ -15,6 +16,13 @@ public class KnockbackState : IState
 
     public void Enter()
     {
+        if (player.CheckEffect(EStatusEffect.Invincible) || player.IsKnockedBack)
+        {
+            player.IsKnockedBack = false;
+            player.FSMMachine.ChangeState(new IdleState(player));
+            return; 
+        }
+
         player.PlayerState = EPlayerState.KnockBack;
         player.StartKnockback(direction, target);
     }
@@ -25,5 +33,8 @@ public class KnockbackState : IState
     }
 
 
-    public void Exit() { }
+    public void Exit() 
+    { 
+
+    }
 }

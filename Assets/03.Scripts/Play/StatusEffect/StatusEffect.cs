@@ -13,6 +13,7 @@ public enum EStatusEffect
 { 
     Exhaustion,
     SpeedUp,
+    Invincible,
 }
 
 

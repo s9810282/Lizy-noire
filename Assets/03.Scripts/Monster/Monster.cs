@@ -25,11 +25,16 @@ public class Monster : MonoBehaviour, IDamageAble
     [SerializeField] HpBar hpBar;
 
     [SerializeField] float currentHP;
+    [SerializeField] bool isGroggy = false;
     [SerializeField] List<RelativeDirection> shieldDir = new List<RelativeDirection>();
 
     [SerializeField] PathNode targetNode;
     [SerializeField] PathNode nextTargetNode;
     [SerializeField] List<PathNode> pathNodes = new List<PathNode>();
+
+    [Header("Layers")]
+    [SerializeField] private LayerMask wallLayer;
+    [SerializeField] private LayerMask bounceLayer;
 
     int currentMovePathCount = 0;
 
@@ -67,11 +72,16 @@ public class Monster : MonoBehaviour, IDamageAble
 
     public Node.Status Move()
     {
+        if (CheckBound())
+        {
+            return Node.Status.Success;
+        }
+
         RotateTowardsDirection();
         transform.position = Vector3.MoveTowards(transform.position,
-            nextTargetNode.worldPosition,  Time.deltaTime * data.speed);
+            nextTargetNode.worldPosition, Time.deltaTime * data.speed);
 
-        if(Vector3.Distance(transform.position, nextTargetNode.worldPosition) < 0.01f)
+        if (Vector3.Distance(transform.position, nextTargetNode.worldPosition) < 0.01f)
         {
             transform.position = nextTargetNode.worldPosition;
             if (transform.position == targetNode.worldPosition)
@@ -105,7 +115,7 @@ public class Monster : MonoBehaviour, IDamageAble
             (int)targetNode.worldPosition.x, (int)targetNode.worldPosition.z);
 
         currentMovePathCount = -1;
-        
+
         if (pathNodes != null)
         {
             for (int i = 0; i < pathNodes.Count - 1; i++)
@@ -117,6 +127,36 @@ public class Monster : MonoBehaviour, IDamageAble
             }
         }
     }
+
+
+
+    #region Physcs
+
+    public bool RaycaseWall(Vector3 dir, out RaycastHit hit, float distance = 0.8f)
+    {
+        return Physics.Raycast(transform.position, dir, out hit, distance, wallLayer);
+    }
+    public bool RaycaseBounce(Vector3 dir, out RaycastHit hit)
+    {
+        Vector3 pos = transform.position;
+        return Physics.Raycast(pos, dir, out hit, 0.8f, bounceLayer);
+    }
+
+    public bool CheckBound()
+    {
+        if (RaycaseBounce(transform.forward, out RaycastHit bounceHit))
+        {
+            PlayerController target = bounceHit.collider.GetComponent<PlayerController>();
+            target.FSMMachine.ChangeState(new KnockbackState(target, transform.forward, this));
+            return true;
+        }
+
+        return false;
+    }
+
+
+    #endregion
+
 
 
 

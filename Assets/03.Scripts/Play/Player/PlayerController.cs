@@ -1,8 +1,6 @@
-using UnityEngine.InputSystem;
-using UnityEngine;
 using System.Collections;
-using NUnit.Framework.Interfaces;
-using System;
+using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour, IEffectTarget, IDamageAble
 {
@@ -36,9 +34,10 @@ public class PlayerController : MonoBehaviour, IEffectTarget, IDamageAble
     [SerializeField] private float knockBackHeight = 1f;
     [Space(15f)]
     [SerializeField] bool isKnockedBack = false;
-    [SerializeField] bool isTryLanding = false;
-    [SerializeField] bool isFalling = false;
-    [SerializeField] bool isDamageAble = false;
+    [SerializeField] private bool isTryLanding = false;
+    [SerializeField] private bool isFalling = false;
+
+    [SerializeField] public bool isInvinvible => statusEffectManager.CheckStatus(EStatusEffect.Invincible);
 
     [Header("Layers")]
     [SerializeField] private LayerMask wallLayer;
@@ -71,11 +70,11 @@ public class PlayerController : MonoBehaviour, IEffectTarget, IDamageAble
     public Vector3 TargetPosition { get => targetPosition; set => targetPosition = value; }
     
     public bool IsKnockedBack { get => isKnockedBack; set => isKnockedBack = value; }
-    public bool IsDamageAble { get => isDamageAble; set => isDamageAble = value; }
     public EPlayerState PlayerState { get => playerState; set => playerState = value; }
 
 
     #endregion
+
 
     private void Awake()
     {
@@ -102,6 +101,7 @@ public class PlayerController : MonoBehaviour, IEffectTarget, IDamageAble
     }
 
 
+    #region Input
     public void OnMove(InputAction.CallbackContext context)
     {
         if (IsKnockedBack) return;
@@ -124,9 +124,6 @@ public class PlayerController : MonoBehaviour, IEffectTarget, IDamageAble
         else
             InputDirection = input.y > 0 ? Vector3.forward : Vector3.back;
     }
-
-    
-
     public void OnSpace(InputAction.CallbackContext context)
     {
         if (!IsKnockedBack) return;
@@ -142,7 +139,7 @@ public class PlayerController : MonoBehaviour, IEffectTarget, IDamageAble
         if (yPos > landingMax)  //경직
         {
             Debug.Log("Bad Early");
-            KnockbackBeforeStatus = new ExhaustionBuff("경직", 1f, this, EStatusEffect.Exhaustion, baseMoveSpeed, 25);
+            KnockbackBeforeStatus = new ExhaustionBuff("경직", 2f, this, EStatusEffect.Exhaustion, baseMoveSpeed, 25);
         }
         else if (yPos > landingMin) //부스트
         {
@@ -155,19 +152,20 @@ public class PlayerController : MonoBehaviour, IEffectTarget, IDamageAble
         else //경직
         {
             Debug.Log("Bad Late");
-            KnockbackBeforeStatus = new ExhaustionBuff("경직", 1f, this, EStatusEffect.Exhaustion, baseMoveSpeed, 25);
+            KnockbackBeforeStatus = new ExhaustionBuff("경직", 2f, this, EStatusEffect.Exhaustion, baseMoveSpeed, 25);
         }
-    }
-
-    public void UpdateSpeed()
-    {
-        currentMoveSpeed = baseMoveSpeed + moveSpeedModifier;
     }
 
     public void ResetInput()
     {
         InputDirection = Vector3.zero;
     }
+
+    #endregion
+
+
+    #region Position
+
     public void SetTargetPosition(Vector3 worldPos)
     {
         targetPosition = SnapToGrid(worldPos);
@@ -175,7 +173,7 @@ public class PlayerController : MonoBehaviour, IEffectTarget, IDamageAble
     public void SetPlayerPosToTarget()
     {
         transform.position = targetPosition;
-    }   //SetTargetPosition 호출 후 사용
+    }   /*SetTargetPosition 호출 후 사용*/
     public Vector3 SnapToGrid(Vector3 pos)
     {
         return new Vector3(
@@ -184,13 +182,23 @@ public class PlayerController : MonoBehaviour, IEffectTarget, IDamageAble
             Mathf.Round(pos.z)
         );
     }
+    public Vector3 SnapToGridZero(Vector3 pos)
+    {
+        return new Vector3(
+            Mathf.Round(pos.x),
+            0f,
+            Mathf.Round(pos.z)
+        );
+    }
     public Vector3 GetPlayerToTargetFoward()
     {
         return targetPosition - SnapToGrid(transform.position);
     }
 
-    
+    #endregion
 
+
+    #region Rotate
 
     public void RotateTowardsDirection()
     {
@@ -240,12 +248,16 @@ public class PlayerController : MonoBehaviour, IEffectTarget, IDamageAble
         return 0f;
     }
 
+    #endregion
 
-    public bool CheckWall(Vector3 dir, out RaycastHit hit, float distance = 0.8f)
+
+    #region Raycast/KnockBack
+
+    public bool RaycaseWall(Vector3 dir, out RaycastHit hit, float distance = 0.8f)
     {
         return Physics.Raycast(transform.position, dir, out hit, distance, wallLayer);
     }
-    public bool CheckBounce(Vector3 dir, out RaycastHit hit)
+    public bool RaycaseBounce(Vector3 dir, out RaycastHit hit)
     {
         Vector3 pos = transform.position;
 
@@ -254,11 +266,12 @@ public class PlayerController : MonoBehaviour, IEffectTarget, IDamageAble
 
 
     //Monster Data에 값에 따라서 값들 조정
+    StatusEffect KnockbackBeforeStatus;
+    IState KnockbackBeforeState;
 
     public void StartKnockback(Vector3 direction, Monster target, float distance = 2f, float height = 1f, float duration = 0.4f)
     {
-        if (IsKnockedBack) return;
-
+        //현재 무적 시 몬스터 바로 앞이라서 계속해서 Knockbact-> Idle-> Move로 반복 중
         IsKnockedBack = true;
         isTryLanding = false;
         isFalling = false;
@@ -267,25 +280,39 @@ public class PlayerController : MonoBehaviour, IEffectTarget, IDamageAble
         duration = knockBackDuration * distance;
         height = knockBackHeight;
 
-        KnockbackBeforeStatus = new ExhaustionBuff("경직", 1f, this, EStatusEffect.Exhaustion, baseMoveSpeed, 25);
         KnockbackBeforeState = new IdleState(this);
-
+        KnockbackBeforeStatus = new ExhaustionBuff("경직", 1f, this, EStatusEffect.Exhaustion, baseMoveSpeed, 25);
+        
         Vector3 start = transform.position;
         Vector3 end = SnapToGrid(start + direction * distance);
+        Vector3 wallFront = Vector3.zero;
+        direction = SnapToGridZero(direction);
 
-        if (isDamageAble)
+        Debug.Log(direction);
+
+
+        if (statusEffectManager.CheckStatus(EStatusEffect.Exhaustion))
         {
-            ((IDamageAble)this).TakeDamage(0);
-
+            ((IDamageAble)this).TakeDamage(target.Data.damage);
 
             distance = 1f;
-            //랜덤방향 근데 벽이 있는지 체크해야함
-            //direction = Vector3.zero;
-            
-            end = SnapToGrid(start + direction * distance);
+            isTryLanding = true;
+            KnockbackBeforeStatus = new InvincibleBuff("무적", 5f, this, EStatusEffect.Invincible);
 
-            //아직 막아두기
-            return;
+            if (RaycaseWall(direction, out RaycastHit hit, distance))
+            {
+                direction *= 2;
+                Debug.Log(direction);
+                wallFront = SnapToGrid(hit.transform.position - direction);
+                float b = Vector3.Distance(start, wallFront) + 1f;
+                duration = b * knockBackDuration;
+                end = wallFront;
+            }
+            else
+            {
+                duration = knockBackDuration;
+                end = SnapToGrid(start + direction * distance);
+            }
         }
         else
         {
@@ -296,10 +323,9 @@ public class PlayerController : MonoBehaviour, IEffectTarget, IDamageAble
                 target.RemoveShield(toPlayer);
                 target.TakeDamage(atk);
 
-                if (CheckWall(direction, out RaycastHit hit, distance)) //스턴
+                if (RaycaseWall(direction, out RaycastHit hit, distance)) //스턴
                 {
-                    Vector3 wallFront = SnapToGrid(hit.transform.position - direction);
-
+                    wallFront = SnapToGrid(hit.transform.position - direction);
                     float b = Vector3.Distance(start, wallFront) + 1f;
                     duration = b * knockBackDuration;
                     end = wallFront;
@@ -315,14 +341,11 @@ public class PlayerController : MonoBehaviour, IEffectTarget, IDamageAble
             {
                 if (!target.CheckShield(toPlayer))
                 {
-                    Debug.Log("Slash");
-
                     IsKnockedBack = false;
                     target.TakeDamage(9999);
 
                     ResetInput();
                     fsmMachine.ChangeState(new IdleState(this));
-                    
                     return;
                 }
                 else
@@ -333,10 +356,9 @@ public class PlayerController : MonoBehaviour, IEffectTarget, IDamageAble
                     distance = distance * 2;
                     duration = duration / 2;
                     
-                    if (CheckWall(direction, out RaycastHit hit, distance)) //기절
+                    if (RaycaseWall(direction, out RaycastHit hit, distance)) //기절
                     {
-                        Vector3 wallFront = SnapToGrid(hit.transform.position - direction);
-
+                        wallFront = SnapToGrid(hit.transform.position - direction);
                         float b = Vector3.Distance(start, wallFront) + 1f;
                         duration = b * knockBackDuration;
                         end = wallFront;
@@ -348,26 +370,17 @@ public class PlayerController : MonoBehaviour, IEffectTarget, IDamageAble
                         end = SnapToGrid(start + direction * distance);
                         KnockbackBeforeStatus = new ExhaustionBuff("스턴", 2f, this, EStatusEffect.Exhaustion, baseMoveSpeed, 50);
                     }
-
                 }
             }
         }
 
-
         StartCoroutine(DoParabolaKnockback(direction, distance, height, duration , start, end));
     }
-
-
-
-    StatusEffect KnockbackBeforeStatus;
-    IState KnockbackBeforeState;
-
     private IEnumerator DoParabolaKnockback(Vector3 dir, float dist, float height, float duration, Vector3 start, Vector3 end)
     {
         ResetInput();
 
         float elapsed = 0f;
-
 
         while (elapsed < duration)
         {
@@ -391,25 +404,36 @@ public class PlayerController : MonoBehaviour, IEffectTarget, IDamageAble
         IsKnockedBack = false;
 
         fsmMachine.ChangeState(KnockbackBeforeState);
-        statusEffectManager.CheckBoostorEXhaustion(KnockbackBeforeStatus);
-        AddEffect(KnockbackBeforeStatus);   
+        statusEffectManager.AddEffect(KnockbackBeforeStatus);   
     }
 
+    #endregion
+    
+
+    #region State
 
     public void AddEffect(StatusEffect effect)
     {
-        if (effect == null)
-            return;
-
-        
         statusEffectManager.AddEffect(effect);
     }
-    
+    public bool CheckEffect(EStatusEffect effect)
+    {
+        return statusEffectManager.CheckStatus(effect);
+    }
+
+    public void UpdateSpeed()
+    {
+        currentMoveSpeed = baseMoveSpeed + moveSpeedModifier;
+    }
+
+    #endregion
+
+
+
+    #region IDamage
+
     void IDamageAble.TakeDamage(float damage)
     {
-        //return 할게 아니라 isDamageAble이 false 라면 knockback으로 진행
-        if (!isDamageAble) return;
-
         hp -= damage;
 
         if (hp <= 0)
@@ -417,7 +441,11 @@ public class PlayerController : MonoBehaviour, IEffectTarget, IDamageAble
             Debug.Log("Die");
         }
     }
-    
+
+    #endregion
+
+
+    #region IEffect
 
     void IEffectTarget.ModifyMoveSpeed(float factor)
     {
@@ -432,7 +460,7 @@ public class PlayerController : MonoBehaviour, IEffectTarget, IDamageAble
     {
         ResetInput();
         targetPosition = transform.position;
-
-        isDamageAble = value;
     }
+
+    #endregion
 }
