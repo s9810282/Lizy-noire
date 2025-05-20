@@ -16,6 +16,7 @@ public class MoveState : IState
     public void Enter()
     {
         player.PlayerState = EPlayerState.Move;
+        player.AnimSetBool("isMove", true);
 
         if (CheckWall()) return;
         CheckBounce();
@@ -30,7 +31,6 @@ public class MoveState : IState
 
     public void Update()
     {
-        
         player.RotateTowardsDirection(targetforward);
         player.transform.position = Vector3.MoveTowards(
             player.transform.position,

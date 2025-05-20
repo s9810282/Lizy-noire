@@ -6,13 +6,17 @@ public enum EffectType
     Blow,
     Slash,
     Ult,
+
+    Stun,
+    Invinsible,
+
 }
 
 
 
 public class EffectManager : MonoBehaviour
 {
-    
+    [SerializeField] SerializableDictionary<EffectType, Effect> effectList;
 
 
     void Start()

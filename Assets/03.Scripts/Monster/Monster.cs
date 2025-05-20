@@ -207,14 +207,15 @@ public class Monster : MonoBehaviour, IDamageAble
     public bool CheckShield(Vector3 toPlayer)
     {
         RelativeDirection dir = GetRelativeDirection(toPlayer);
+        Debug.Log(dir);
 
         if (shieldDir.Contains(dir))
         {
-            return true;
+            return false;
         }
         else
         {
-            return false;
+            return true;
         }
     }
     public void RemoveShield(Vector3 toPlayer)

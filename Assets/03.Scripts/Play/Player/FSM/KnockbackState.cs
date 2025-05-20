@@ -16,7 +16,7 @@ public class KnockbackState : IState
 
     public void Enter()
     {
-        if (player.CheckEffect(EStatusEffect.Invincible) || player.IsKnockedBack)
+        if (player.CheckEffect(EStatusEffect.Invincible) || player.IsKnockedBack) //RaycaseBounce에서 한번 검사해서 없어도 되려나
         {
             player.IsKnockedBack = false;
             player.FSMMachine.ChangeState(new IdleState(player));

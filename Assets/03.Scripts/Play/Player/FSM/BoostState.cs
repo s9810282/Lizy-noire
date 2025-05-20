@@ -18,6 +18,7 @@ public class BoostState : TimedState
         base.Enter();
 
         player.PlayerState = EPlayerState.Boost;
+        player.PlayAnim("Move");
 
         if (CheckWall()) return;
         CheckBounce();

@@ -1,4 +1,5 @@
 using System.Collections;
+using Unity.AppUI.UI;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -7,6 +8,7 @@ public class PlayerController : MonoBehaviour, IEffectTarget, IDamageAble
     [Header("System")]
     [SerializeField] StateMachine fsmMachine;
     [SerializeField] StatusEffectManager statusEffectManager;
+    [SerializeField] Animator anim;
 
     [Header("Player")]
     [SerializeField] Player player;
@@ -92,6 +94,8 @@ public class PlayerController : MonoBehaviour, IEffectTarget, IDamageAble
         hp = maxHp;
 
         fsmMachine.ChangeState(new IdleState(this));
+        anim.SetBool("isMove", false);
+        
     }
 
     private void Update()
@@ -143,7 +147,7 @@ public class PlayerController : MonoBehaviour, IEffectTarget, IDamageAble
         }
         else if (yPos > landingMin) //부스트
         {
-            // 부스트 활성화 시 끝나는 것도 체크해야함
+            //부스트 활성화 시 끝나는 것도 체크해야함
             //부스트 남은 횟수, 그에 따른 시간 등 체크
             Debug.Log("Good");
             KnockbackBeforeStatus = new SpeedBuff("부스트 속도 업", 3f, this, EStatusEffect.SpeedUp, baseMoveSpeed/2f);
@@ -259,6 +263,12 @@ public class PlayerController : MonoBehaviour, IEffectTarget, IDamageAble
     }
     public bool RaycaseBounce(Vector3 dir, out RaycastHit hit)
     {
+        if (statusEffectManager.CheckStatus(EStatusEffect.Invincible))
+        {
+            hit = default;
+            return false;
+        }
+        
         Vector3 pos = transform.position;
 
         return Physics.Raycast(pos, dir, out hit, 0.8f, bounceLayer);
@@ -288,7 +298,8 @@ public class PlayerController : MonoBehaviour, IEffectTarget, IDamageAble
         Vector3 wallFront = Vector3.zero;
         direction = SnapToGridZero(direction);
 
-        Debug.Log(direction);
+        AnimSetBool("isMove", true);
+        
 
 
         if (statusEffectManager.CheckStatus(EStatusEffect.Exhaustion))
@@ -301,6 +312,8 @@ public class PlayerController : MonoBehaviour, IEffectTarget, IDamageAble
 
             if (RaycaseWall(direction, out RaycastHit hit, distance))
             {
+                AnimSetInt("KnockBack", 3);
+
                 direction *= 2;
                 Debug.Log(direction);
                 wallFront = SnapToGrid(hit.transform.position - direction);
@@ -310,6 +323,7 @@ public class PlayerController : MonoBehaviour, IEffectTarget, IDamageAble
             }
             else
             {
+                AnimSetInt("KnockBack", 1);
                 duration = knockBackDuration;
                 end = SnapToGrid(start + direction * distance);
             }
@@ -320,6 +334,8 @@ public class PlayerController : MonoBehaviour, IEffectTarget, IDamageAble
 
             if (playerAttackType == EAttakcType.Blow)
             {
+                AnimSetInt("KnockBack", 1);
+
                 target.RemoveShield(toPlayer);
                 target.TakeDamage(atk);
 
@@ -350,6 +366,8 @@ public class PlayerController : MonoBehaviour, IEffectTarget, IDamageAble
                 }
                 else
                 {
+                    AnimSetInt("KnockBack", 2);
+
                     isTryLanding = true;
 
                     height = 0.25f;
@@ -360,7 +378,7 @@ public class PlayerController : MonoBehaviour, IEffectTarget, IDamageAble
                     {
                         wallFront = SnapToGrid(hit.transform.position - direction);
                         float b = Vector3.Distance(start, wallFront) + 1f;
-                        duration = b * knockBackDuration;
+                        duration = b * knockBackDuration / 2;
                         end = wallFront;
 
                         KnockbackBeforeStatus = new ExhaustionBuff("기절", 4f, this, EStatusEffect.Exhaustion, baseMoveSpeed, 100);
@@ -424,8 +442,20 @@ public class PlayerController : MonoBehaviour, IEffectTarget, IDamageAble
     public void UpdateSpeed()
     {
         currentMoveSpeed = baseMoveSpeed + moveSpeedModifier;
+        anim.SetFloat("Speed", currentMoveSpeed);
     }
-
+    public void PlayAnim(string animName, float speed = 1f)
+    {
+        anim.Play(animName, 0, speed);
+    }
+    public void AnimSetBool(string id, bool type = false)
+    {
+        anim.SetBool(id, type);
+    }
+    public void AnimSetInt(string id, int type = 1)
+    {
+        anim.SetInteger(id, type);
+    }
     #endregion
 
 

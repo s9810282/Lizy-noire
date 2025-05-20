@@ -12,6 +12,8 @@ public class IdleState : IState
     public void Enter() 
     {
         player.PlayerState = EPlayerState.Idle;
+        player.AnimSetBool("isMove", false);
+        player.AnimSetInt("KnockBack", 0);
     }
 
     public void Update()
