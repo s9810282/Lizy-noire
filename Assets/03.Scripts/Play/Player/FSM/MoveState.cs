@@ -17,6 +17,7 @@ public class MoveState : IState
     {
         player.PlayerState = EPlayerState.Move;
         player.AnimSetBool("isMove", true);
+        player.AnimSetInt("KnockBack", 0);
 
         if (CheckWall()) return;
         CheckBounce();
