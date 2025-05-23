@@ -22,6 +22,7 @@ public class MonsterData : ScriptableObject
     public string name;
 
     public float damage;
+    public float groggyDuration = 1f;
     public float maxHp;
     public float speed;
 

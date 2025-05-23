@@ -9,5 +9,4 @@ public class EffectData : ScriptableObject
     public Vector3 localPositionOffset;
     public Vector3 localRotation;
     public Vector3 localScale = Vector3.one;
-    public float duration = 1.5f;
 }

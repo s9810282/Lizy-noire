@@ -102,6 +102,14 @@ public class PlayerController : MonoBehaviour, IEffectTarget, IDamageAble
     {
         fsmMachine.Update();
         statusEffectManager.Update();
+
+        if(Input.GetMouseButtonDown(0))
+        {
+            if (playerAttackType == EAttakcType.Blow)
+                playerAttackType = EAttakcType.Slash;
+            else
+                playerAttackType = EAttakcType.Blow;
+        }
     }
 
 
@@ -281,7 +289,8 @@ public class PlayerController : MonoBehaviour, IEffectTarget, IDamageAble
 
     public void StartKnockback(Vector3 direction, Monster target, float distance = 2f, float height = 1f, float duration = 0.4f)
     {
-        //현재 무적 시 몬스터 바로 앞이라서 계속해서 Knockbact-> Idle-> Move로 반복 중
+        RotateInstantly(-direction);
+        
         IsKnockedBack = true;
         isTryLanding = false;
         isFalling = false;
@@ -298,10 +307,6 @@ public class PlayerController : MonoBehaviour, IEffectTarget, IDamageAble
         Vector3 wallFront = Vector3.zero;
         direction = SnapToGridZero(direction);
 
-        AnimSetBool("isMove", true);
-        
-
-
         if (statusEffectManager.CheckStatus(EStatusEffect.Exhaustion))
         {
             ((IDamageAble)this).TakeDamage(target.Data.damage);
@@ -312,7 +317,7 @@ public class PlayerController : MonoBehaviour, IEffectTarget, IDamageAble
 
             if (RaycaseWall(direction, out RaycastHit hit, distance))
             {
-                AnimSetInt("KnockBack", 3);
+                AnimSetInt("KnockBack", 1);
 
                 direction *= 2;
                 Debug.Log(direction);
@@ -336,6 +341,16 @@ public class PlayerController : MonoBehaviour, IEffectTarget, IDamageAble
             {
                 AnimSetInt("KnockBack", 1);
 
+                EventBus.Publish(new EffectRequest
+                {
+                    effectCode = "PlayerBlow",
+                    type = EffectType.Blow,
+                    offset = transform.position,
+                    parent = null,
+                });
+
+                StartCoroutine(RemoveEffect("PlayerBlow", 0.5f));
+
                 target.RemoveShield(toPlayer);
                 target.TakeDamage(atk);
 
@@ -355,8 +370,29 @@ public class PlayerController : MonoBehaviour, IEffectTarget, IDamageAble
             }
             else if(playerAttackType == EAttakcType.Slash)
             {
+                EventBus.Publish(new EffectRequest
+                {
+                    effectCode = "PlayerSlash",
+                    type = EffectType.Slash,
+                    offset = transform.position,
+                    parent = null,
+                });
+
+                StartCoroutine(RemoveEffect("PlayerSlash", 0.5f));
+
                 if (!target.CheckShield(toPlayer))
                 {
+                    EventBus.Publish(new EffectRequest
+                    {
+                        effectCode = "PlayerSlashHit",
+                        type = EffectType.SlashHit,
+                        offset = transform.position,
+                        parent = null,
+                    });
+
+                    StartCoroutine(RemoveEffect("PlayerSlashHit", 0.5f));
+
+
                     IsKnockedBack = false;
                     target.TakeDamage(9999);
 
@@ -366,7 +402,7 @@ public class PlayerController : MonoBehaviour, IEffectTarget, IDamageAble
                 }
                 else
                 {
-                    AnimSetInt("KnockBack", 2);
+                    //AnimSetInt("KnockBack", 2);
 
                     isTryLanding = true;
 
@@ -381,10 +417,16 @@ public class PlayerController : MonoBehaviour, IEffectTarget, IDamageAble
                         duration = b * knockBackDuration / 2;
                         end = wallFront;
 
+                        if (b > 2f)
+                            AnimSetInt("KnockBack", 2);
+                        else
+                            AnimSetInt("KnockBack", 1);
+
                         KnockbackBeforeStatus = new ExhaustionBuff("기절", 4f, this, EStatusEffect.Exhaustion, baseMoveSpeed, 100);
                     }
                     else // 스턴
                     {
+                        AnimSetInt("KnockBack", 2);
                         end = SnapToGrid(start + direction * distance);
                         KnockbackBeforeStatus = new ExhaustionBuff("스턴", 2f, this, EStatusEffect.Exhaustion, baseMoveSpeed, 50);
                     }
@@ -490,6 +532,16 @@ public class PlayerController : MonoBehaviour, IEffectTarget, IDamageAble
     {
         ResetInput();
         targetPosition = transform.position;
+    }
+    public Transform GetTarget()
+    {
+        return transform;
+    }
+
+    IEnumerator RemoveEffect(string effectcode, float duration)
+    {
+        yield return new WaitForSeconds(duration);
+        EventBus.Publish(effectcode);
     }
 
     #endregion

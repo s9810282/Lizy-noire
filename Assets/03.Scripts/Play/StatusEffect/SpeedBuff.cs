@@ -17,6 +17,13 @@ public class SpeedBuff : StatusEffect
     public override void ApplyEffect()
     {
         Target.ModifyMoveSpeed(speedValue);
+        EventBus.Publish(new EffectRequest
+        {
+            effectCode = "PlayerSpeed",
+            type = EffectType.SpeedUp,
+            parent = Target.GetTarget(),
+            duration = Duration
+        });
     }
 
     public override void UpdateEffect()
@@ -27,5 +34,6 @@ public class SpeedBuff : StatusEffect
     public override void RemoveEffect()
     {
         Target.ModifyMoveSpeed(-speedValue);
+        EventBus.Publish("PlayerSpeed");
     }
 }

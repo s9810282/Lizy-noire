@@ -15,12 +15,13 @@ public class MoveState : IState
 
     public void Enter()
     {
+
+        if (CheckWall()) return;
+        if (CheckBounce()) return;
+
         player.PlayerState = EPlayerState.Move;
         player.AnimSetBool("isMove", true);
         player.AnimSetInt("KnockBack", 0);
-
-        if (CheckWall()) return;
-        CheckBounce();
 
         if (!isAlready)
         {

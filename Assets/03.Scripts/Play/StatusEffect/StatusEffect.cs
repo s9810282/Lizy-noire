@@ -7,6 +7,7 @@ public interface IEffectTarget
     void ModifyMoveSpeed(float factor);
     void TakeTickDamage(float value);
     void SetDamaAble(bool value);
+    Transform GetTarget();
 }
 
 public enum EStatusEffect
@@ -25,6 +26,7 @@ public abstract class StatusEffect
     private float duration;
     private IEffectTarget target;
     private EStatusEffect statusEffect;
+    protected bool isEffect;
 
     public float Duration { get => duration; set => duration = value; }
     public string BuffName { get => buffName; set => buffName = value; }
@@ -32,12 +34,13 @@ public abstract class StatusEffect
     public EStatusEffect eStatusEffect { get => statusEffect; set => statusEffect = value; }
     
 
-    public StatusEffect(string name, float duration, IEffectTarget target, EStatusEffect eStatusEffect)
+    public StatusEffect(string name, float duration, IEffectTarget target, EStatusEffect eStatusEffect, bool isEffect = true)
     {
         this.buffName = name;
         this.duration = duration;
         this.target = target;  
         this.statusEffect = eStatusEffect;
+        this.isEffect = isEffect;
     }
 
 

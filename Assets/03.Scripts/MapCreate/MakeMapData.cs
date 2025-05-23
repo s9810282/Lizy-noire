@@ -46,6 +46,8 @@ public class MakeMapData : MonoBehaviour
         {
             tileSprites = tileSpritesList.ToDictionary(entry => entry.key, entry => entry.tile);
         }
+
+        tileSprites = tileSpritesList.ToDictionary(entry => entry.key, entry => entry.tile);
         return tileSprites;
     }
 
@@ -59,6 +61,8 @@ public class MakeMapData : MonoBehaviour
         {
             tileCubes = tileCubesList.ToDictionary(entry => entry.key, entry => entry.cube);
         }
+
+        tileCubes = tileCubesList.ToDictionary(entry => entry.key, entry => entry.cube);
         return tileCubes;
     }
 

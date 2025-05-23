@@ -1,3 +1,7 @@
+using System.Collections.Generic;
+using System.Linq;
+using Unity.Android.Gradle.Manifest;
+using UnityEditor.PackageManager.Requests;
 using UnityEngine;
 
 
@@ -5,39 +9,76 @@ public enum EffectType
 {
     Blow,
     Slash,
+    SlashHit,
     Ult,
 
     Stun,
-    Invinsible,
-
+    DamageAble,
+    SpeedUp,
 }
 
 
 
-public class EffectManager
+public class EffectManager  : MonoBehaviour
 {
-    private static EffectManager instance;
-    public static EffectManager Instance
+    [System.Serializable]
+    public class EffectEntry
     {
-        get 
-        { 
-            if(instance == null)
-                instance = new EffectManager();
+        public EffectType type;
+        public EffectData data;
+    }
+    [System.Serializable]
+    public class EffectObj
+    {
+        public EffectType type;
+        public GameObject obj;
 
-            return instance; 
-        } 
+        public EffectObj(EffectType type, GameObject data)
+        {
+            this.type = type;
+            this.obj = data;
+        }
     }
 
+    public List<EffectEntry> effectList;
 
+    private Dictionary<EffectType, EffectData> effectDict;
+    private Dictionary<string, EffectObj> currentEffects = new Dictionary<string, EffectObj>();
 
-    public void PlayEffect(EffectData data, Transform parent)
+    private void OnEnable()
     {
-        GameObject fx = GameObject.Instantiate(data.effectPrefab, parent);
+        effectDict = effectList.ToDictionary(e => e.type, e => e.data);
+        EventBus.Subscribe<EffectRequest>(OnEffectRequested);
+        EventBus.Subscribe<string>(RemoveEffectRequested);
+    }
 
-        fx.transform.localPosition = data.localPositionOffset;
+    private void OnDisable()
+    {
+        EventBus.Unsubscribe<EffectRequest>(OnEffectRequested);
+        EventBus.Unsubscribe<string>(RemoveEffectRequested);
+    }
+
+    private void OnEffectRequested(EffectRequest req)
+    {
+        if (!effectDict.TryGetValue(req.type, out var data))
+        {
+            Debug.LogWarning($"EffectType '{req.type}' not registered.");
+            return;
+        }
+
+        GameObject fx = Instantiate(data.effectPrefab, req.parent);
+        fx.transform.localPosition = data.localPositionOffset + req.offset;
         fx.transform.localEulerAngles = data.localRotation;
         fx.transform.localScale = data.localScale;
 
-        GameObject.Destroy(fx, data.duration);
+        currentEffects.Add(req.effectCode, new EffectObj(req.type, fx));
+    }
+
+    private void RemoveEffectRequested(string code)
+    {
+        if (!currentEffects.ContainsKey(code)) return;
+
+        Destroy(currentEffects[code].obj);
+        currentEffects.Remove(code);
     }
 }

@@ -17,12 +17,12 @@ public class BoostState : TimedState
     {
         base.Enter();
 
+        if (CheckWall()) return;
+        if (CheckBounce()) return;
+
         player.PlayerState = EPlayerState.Boost;
         player.AnimSetBool("isMove", true);
         player.AnimSetInt("KnockBack", 0);
-
-        if (CheckWall()) return;
-        CheckBounce();
 
         Vector3 nextPos = player.TargetPosition + boostDir;
         player.SetTargetPosition(nextPos);

@@ -1,5 +1,6 @@
 using JetBrains.Annotations;
 using NUnit.Framework;
+using System.Collections;
 using System.Collections.Generic;
 using Unity.Behavior;
 using UnityEngine;
@@ -67,13 +68,31 @@ public class Monster : MonoBehaviour, IDamageAble
         AddShield();
     }
 
-
+    IEnumerator WaitGroggy()
+    {
+        yield return new WaitForSeconds(data.groggyDuration);
+        EventBus.Publish("MonsterStun");
+        isGroggy = false;
+    }
 
 
     public Node.Status Move()
     {
+        if (isGroggy) return Node.Status.Running;
+
         if (CheckBound())
         {
+            isGroggy = true;
+
+            EventBus.Publish(new EffectRequest
+            {
+                effectCode = "MonsterStun",
+                type = EffectType.Stun,
+                parent = transform,
+                duration = 1f
+            });
+
+            StartCoroutine(WaitGroggy());
             return Node.Status.Success;
         }
 
@@ -147,6 +166,7 @@ public class Monster : MonoBehaviour, IDamageAble
         if (RaycaseBounce(transform.forward, out RaycastHit bounceHit))
         {
             PlayerController target = bounceHit.collider.GetComponent<PlayerController>();
+            if (target.isInvinvible) return false;
             target.FSMMachine.ChangeState(new KnockbackState(target, transform.forward, this));
             return true;
         }

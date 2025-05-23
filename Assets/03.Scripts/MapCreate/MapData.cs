@@ -33,7 +33,7 @@ public enum ETileType
 
     Moneter_1,
     Moneter_2,
-
+    Monster_3,
 }
 
 [Serializable]
