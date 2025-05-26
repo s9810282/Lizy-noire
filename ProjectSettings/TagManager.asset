@@ -9,6 +9,7 @@ TagManager:
   - Monster
   - StartPos
   - Item
+  - Boundced
   layers:
   - Default
   - TransparentFX
@@ -21,7 +22,7 @@ TagManager:
   - Wall
   - Monster
   - Item
-  - 
+  - Bounced
   - 
   - 
   - 

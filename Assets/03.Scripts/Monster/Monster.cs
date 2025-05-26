@@ -26,6 +26,7 @@ public class Monster : MonoBehaviour, IDamageAble
     [SerializeField] HpBar hpBar;
 
     [SerializeField] float currentHP;
+    [SerializeField] float currentSpeed;
     [SerializeField] bool isGroggy = false;
     [SerializeField] List<RelativeDirection> shieldDir = new List<RelativeDirection>();
 
@@ -35,7 +36,7 @@ public class Monster : MonoBehaviour, IDamageAble
 
     [Header("Layers")]
     [SerializeField] private LayerMask wallLayer;
-    [SerializeField] private LayerMask bounceLayer;
+    [SerializeField] private LayerMask PlayerLayer;
 
     int currentMovePathCount = 0;
 
@@ -59,6 +60,8 @@ public class Monster : MonoBehaviour, IDamageAble
     void Start()
     {
         currentHP = data.maxHp;
+        currentSpeed = data.speed;
+
         hpBar.SetHP(currentHP, data.maxHp);
         hpBar.HideHpBar(false);
 
@@ -68,14 +71,14 @@ public class Monster : MonoBehaviour, IDamageAble
         AddShield();
     }
 
+
+
     IEnumerator WaitGroggy()
     {
         yield return new WaitForSeconds(data.groggyDuration);
         EventBus.Publish("MonsterStun");
         isGroggy = false;
     }
-
-
     public Node.Status Move()
     {
         if (isGroggy) return Node.Status.Running;
@@ -98,7 +101,7 @@ public class Monster : MonoBehaviour, IDamageAble
 
         RotateTowardsDirection();
         transform.position = Vector3.MoveTowards(transform.position,
-            nextTargetNode.worldPosition, Time.deltaTime * data.speed);
+            nextTargetNode.worldPosition, Time.deltaTime * currentSpeed);
 
         if (Vector3.Distance(transform.position, nextTargetNode.worldPosition) < 0.01f)
         {
@@ -121,6 +124,8 @@ public class Monster : MonoBehaviour, IDamageAble
     {
         Vector3 targetDir = (nextTargetNode.worldPosition - transform.position).normalized;
         targetDir.y = 0;
+
+        if (targetDir == Vector3.zero) return;
 
         Quaternion targetRotation = Quaternion.LookRotation(targetDir);
         transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 100f);
@@ -146,7 +151,10 @@ public class Monster : MonoBehaviour, IDamageAble
             }
         }
     }
-
+    public void SetSpeed(float speed)
+    {
+        currentSpeed = speed;
+    }
 
 
     #region Physcs
@@ -155,15 +163,30 @@ public class Monster : MonoBehaviour, IDamageAble
     {
         return Physics.Raycast(transform.position, dir, out hit, distance, wallLayer);
     }
-    public bool RaycaseBounce(Vector3 dir, out RaycastHit hit)
+    public bool RaycasePlayer(Vector3 dir, out RaycastHit hit, float distance = 0.8f)
     {
         Vector3 pos = transform.position;
-        return Physics.Raycast(pos, dir, out hit, 0.8f, bounceLayer);
+        return Physics.Raycast(pos, dir, out hit, distance, PlayerLayer);
+    }
+    public bool RaycaseBouncedPlayer(Vector3 dir, out RaycastHit hit, float distance = 0.8f)
+    {
+        int combinedMask = wallLayer | PlayerLayer;
+
+        Vector3 pos = transform.position;
+        Physics.Raycast(pos, dir, out hit, distance, combinedMask);
+
+        if (hit.collider != null)
+        {
+            int hitLayerBit = 1 << hit.collider.gameObject.layer;
+            return (PlayerLayer.value & hitLayerBit) != 0;
+        }
+        else
+            return false;
     }
 
     public bool CheckBound()
     {
-        if (RaycaseBounce(transform.forward, out RaycastHit bounceHit))
+        if (RaycasePlayer(transform.forward, out RaycastHit bounceHit))
         {
             PlayerController target = bounceHit.collider.GetComponent<PlayerController>();
             if (target.isInvinvible) return false;
