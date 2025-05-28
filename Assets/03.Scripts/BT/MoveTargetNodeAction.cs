@@ -12,6 +12,7 @@ public partial class MoveTargetNodeAction : Action
 
     protected override Status OnStart()
     {
+        Monster.Value.CheckGroggyAnim();
         return Status.Running;
     }
 

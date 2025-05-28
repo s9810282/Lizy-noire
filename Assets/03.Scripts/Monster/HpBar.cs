@@ -40,4 +40,9 @@ public class HpBar : MonoBehaviour
         fillImage.color = color;
         bgImage.color = color;
     }
+
+    public void SetTarget(Transform t)
+    {
+        target = t;
+    }
 }

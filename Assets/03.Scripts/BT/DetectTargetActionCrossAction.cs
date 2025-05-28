@@ -22,7 +22,7 @@ public partial class DetectTargetActionCrossAction : Action
 
     protected override Status OnUpdate()
     {
-        Debug.Log("Detect");
+        //Debug.Log("Detect");
 
         if (Self.Value.RaycaseBouncedPlayer(Vector3Int.forward, out bounceHit, Range))
         {

@@ -103,6 +103,8 @@ public class PlayerController : MonoBehaviour, IEffectTarget, IDamageAble
         fsmMachine.Update();
         statusEffectManager.Update();
 
+        return;
+
         if(Input.GetMouseButtonDown(0))
         {
             if (playerAttackType == EAttakcType.Blow)
@@ -307,8 +309,11 @@ public class PlayerController : MonoBehaviour, IEffectTarget, IDamageAble
         Vector3 wallFront = Vector3.zero;
         direction = SnapToGridZero(direction);
 
+        target.RotateInstantly(direction);
+
         if (statusEffectManager.CheckStatus(EStatusEffect.Exhaustion))
         {
+            target.HitPlayer();
             ((IDamageAble)this).TakeDamage(target.Data.damage);
 
             distance = 1f;
@@ -506,6 +511,8 @@ public class PlayerController : MonoBehaviour, IEffectTarget, IDamageAble
 
     void IDamageAble.TakeDamage(float damage)
     {
+        Debug.Log("Player Get Damage");
+
         hp -= damage;
 
         if (hp <= 0)

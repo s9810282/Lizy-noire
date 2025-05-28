@@ -72,8 +72,10 @@ public class PathFinder
         {
             if (item == null) continue;
             if (item.TileType == ETileType.None) continue;
+            if (item.TileType == ETileType.START) continue;
             if (item.TileType == ETileType.Moneter_1) continue;
             if (item.TileType == ETileType.Moneter_2) continue;
+            if (item.TileType == ETileType.Monster_3) continue;
 
             PathNode current = pathFinding.grid.GetGridObject3D(new Vector3(item.x, 1, item.z));
             current.isWalkable = false;

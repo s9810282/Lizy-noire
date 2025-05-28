@@ -24,10 +24,14 @@ public class Monster : MonoBehaviour, IDamageAble
     //추후 Spawner랑 MapLoader랑 만들어서 Spawner가 Canvas를 들고있게해서 MapLoad 시에 넣어줄 수 있게 하기.
     [SerializeField] MonsterData data;
     [SerializeField] HpBar hpBar;
+    [SerializeField] Animator animator;
+    [SerializeField] BehaviorGraphAgent bt;
+    [SerializeField] BoxCollider col;
 
     [SerializeField] float currentHP;
     [SerializeField] float currentSpeed;
     [SerializeField] bool isGroggy = false;
+    [SerializeField] bool isMove = false;
     [SerializeField] List<RelativeDirection> shieldDir = new List<RelativeDirection>();
 
     [SerializeField] PathNode targetNode;
@@ -46,14 +50,21 @@ public class Monster : MonoBehaviour, IDamageAble
 
     public void TakeDamage(float damage)
     {
+        HitPlayer();
         currentHP -= damage;
         hpBar.SetHP(currentHP, data.maxHp);
         hpBar.HideHpBar(true);
 
+
         if (currentHP <= 0)
         {
+            bt.enabled = false;
+            animator.enabled = false;
+            col.enabled = false;
+
+            SetAnimTrigger("Die");
             hpBar.HideHpBar(false);
-            Destroy(gameObject);
+            Destroy(gameObject, 1.5f);
         }
     }
 
@@ -62,22 +73,53 @@ public class Monster : MonoBehaviour, IDamageAble
         currentHP = data.maxHp;
         currentSpeed = data.speed;
 
+        hpBar.SetTarget(transform);
         hpBar.SetHP(currentHP, data.maxHp);
         hpBar.HideHpBar(false);
 
         nextTargetNode = new PathNode();
         nextTargetNode.worldPosition = transform.position;
 
+        isMove = false;
+
         AddShield();
     }
 
 
+    public void HitPlayer()
+    {
+        Debug.Log("Hit Player");
+        isGroggy = true;
+        SetAnimTrigger("Down");
+        EventBus.Publish(new EffectRequest
+        {
+            effectCode = "MonsterStun" + name,
+            type = EffectType.Stun,
+            parent = transform,
+            offset = new Vector3(0f, 0.5f, 0f),
+            duration = data.groggyDuration
+        });
 
+        StartCoroutine(WaitGroggy());
+    }
+
+
+    public void CheckGroggyAnim()
+    {
+        if (!isGroggy)
+            SetAnimTrigger("Walk");
+    }
     IEnumerator WaitGroggy()
     {
-        yield return new WaitForSeconds(data.groggyDuration);
-        EventBus.Publish("MonsterStun");
+        yield return new WaitForSeconds(data.groggyDuration * 0.8f);
+        SetAnimTrigger("Up");
+        EventBus.Publish("MonsterStun" + name);
+        yield return new WaitForSeconds(data.groggyDuration * 0.2f);
         isGroggy = false;
+
+        if(isMove)
+            SetAnimTrigger("Walk");
+            
     }
     public Node.Status Move()
     {
@@ -85,19 +127,11 @@ public class Monster : MonoBehaviour, IDamageAble
 
         if (CheckBound())
         {
-            isGroggy = true;
-
-            EventBus.Publish(new EffectRequest
-            {
-                effectCode = "MonsterStun",
-                type = EffectType.Stun,
-                parent = transform,
-                duration = 1f
-            });
-
-            StartCoroutine(WaitGroggy());
+            isMove = false;
             return Node.Status.Success;
         }
+
+        isMove = true;
 
         RotateTowardsDirection();
         transform.position = Vector3.MoveTowards(transform.position,
@@ -107,7 +141,11 @@ public class Monster : MonoBehaviour, IDamageAble
         {
             transform.position = nextTargetNode.worldPosition;
             if (transform.position == targetNode.worldPosition)
+            {
+                isMove = false;
+                SetAnimTrigger("Idle");
                 return Node.Status.Success;
+            }
 
             UpdateTarget();
         }
@@ -130,7 +168,22 @@ public class Monster : MonoBehaviour, IDamageAble
         Quaternion targetRotation = Quaternion.LookRotation(targetDir);
         transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 100f);
     }
+    public void RotateInstantly(Vector3 dir)
+    {
+        if (dir == Vector3.zero) return;
 
+        float yRotation = DirToYRotation(dir);
+        Quaternion targetRotation = Quaternion.Euler(0f, yRotation, 0f);
+        transform.rotation = targetRotation;
+    }
+    private float DirToYRotation(Vector3 dir)
+    {
+        if (dir == Vector3.forward) return 0f;
+        if (dir == Vector3.right) return 90f;
+        if (dir == Vector3.back) return 180f;
+        if (dir == Vector3.left) return 270f;
+        return 0f;
+    }
 
     public void FindPath()
     {
@@ -154,6 +207,14 @@ public class Monster : MonoBehaviour, IDamageAble
     public void SetSpeed(float speed)
     {
         currentSpeed = speed;
+    }
+    public void SetAnimBool(string name, bool val)
+    {
+        animator.SetBool(name, val);
+    }
+    public void SetAnimTrigger(string name)
+    {
+        animator.SetTrigger(name);
     }
 
 

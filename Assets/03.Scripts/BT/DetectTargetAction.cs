@@ -20,7 +20,7 @@ public partial class DetectTargetAction : Action
 
     protected override Status OnUpdate()
     {
-        Debug.Log("Detect");
+        //Debug.Log("Detect");
 
         var self = Self.Value.GetComponent<Transform>();
 
