@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9a60d6a5ffd95814bb5cc21e9cc33a84, type: 3}
-  m_Name: Slash
+  m_Name: BlowSpark
   m_EditorClassIdentifier: 
-  effectName: Slash
-  effectPrefab: {fileID: 7063425834434754590, guid: dc95e5c67bc8a474eaf1fec147fc99ee, type: 3}
-  localPositionOffset: {x: 0, y: 0, z: 0.5}
+  effectName: Blow Spark
+  effectPrefab: {fileID: 2030733174786669713, guid: 4e23644b11b6f544aa74aaaf4b7fa1d2, type: 3}
+  localPositionOffset: {x: 0, y: 0, z: 0}
   localRotation: {x: 0, y: 0, z: 0}
-  localScale: {x: 0.3821606, y: 0.3821606, z: 0.3821606}
+  localScale: {x: 1, y: 1, z: 1}

@@ -9,7 +9,9 @@ public enum EPlayerState
     Idle, 
     Move, 
     KnockBack,
-    Boost
+    Boost,
+
+    Dead
 }
 
 

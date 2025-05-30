@@ -366,7 +366,7 @@ public class PlayerController : MonoBehaviour, IEffectTarget, IDamageAble
                     duration = b * knockBackDuration;
                     end = wallFront;
 
-                    KnockbackBeforeStatus = new ExhaustionBuff("스턴", 2f, this, EStatusEffect.Exhaustion, baseMoveSpeed, 50);
+                    KnockbackBeforeStatus = new ExhaustionBuff("스턴", 2f, this, EStatusEffect.Exhaustion, baseMoveSpeed, 50, true);
                 }
                 else
                 {
@@ -397,7 +397,6 @@ public class PlayerController : MonoBehaviour, IEffectTarget, IDamageAble
 
                     StartCoroutine(RemoveEffect("PlayerSlashHit", 0.5f));
 
-
                     IsKnockedBack = false;
                     target.TakeDamage(9999);
 
@@ -412,7 +411,7 @@ public class PlayerController : MonoBehaviour, IEffectTarget, IDamageAble
                     isTryLanding = true;
 
                     height = 0.25f;
-                    distance = distance * 2;
+                    distance = distance * 1.5f;
                     duration = duration / 2;
                     
                     if (RaycaseWall(direction, out RaycastHit hit, distance)) //기절
@@ -427,7 +426,7 @@ public class PlayerController : MonoBehaviour, IEffectTarget, IDamageAble
                         else
                             AnimSetInt("KnockBack", 1);
 
-                        KnockbackBeforeStatus = new ExhaustionBuff("기절", 4f, this, EStatusEffect.Exhaustion, baseMoveSpeed, 100);
+                        KnockbackBeforeStatus = new ExhaustionBuff("기절", 4f, this, EStatusEffect.Exhaustion, baseMoveSpeed, 100, true);
                     }
                     else // 스턴
                     {
@@ -511,13 +510,12 @@ public class PlayerController : MonoBehaviour, IEffectTarget, IDamageAble
 
     void IDamageAble.TakeDamage(float damage)
     {
-        Debug.Log("Player Get Damage");
-
         hp -= damage;
 
         if (hp <= 0)
         {
             Debug.Log("Die");
+            fsmMachine.ChangeState(new DeadState(this));
         }
     }
 

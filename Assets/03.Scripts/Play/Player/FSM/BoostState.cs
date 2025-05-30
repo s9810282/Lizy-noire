@@ -67,7 +67,7 @@ public class BoostState : TimedState
     {
         player.FSMMachine.ChangeState(new MoveState(player, true));
         player.AddEffect(
-            new ExhaustionBuff("Å»Áø", 2f, player, EStatusEffect.Exhaustion, player.BaseMoveSpeed/2, 25));
+            new ExhaustionBuff("Å»Áø", 2f, player, EStatusEffect.Exhaustion, player.BaseMoveSpeed/2, 25, isEffect: false));
     }
 
 

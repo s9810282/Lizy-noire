@@ -97,7 +97,6 @@ public class MakeMapData : MonoBehaviour
     }
 
 
-
     public ETileType CheckBGTileType(int x, int y)
     {
         Vector3Int cellPos = new Vector3Int(x, y, 0); // 원하는 타일 좌표

@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9a60d6a5ffd95814bb5cc21e9cc33a84, type: 3}
   m_Name: Blow
   m_EditorClassIdentifier: 
-  effectName: 
+  effectName: Blow
   effectPrefab: {fileID: 6594322966216545140, guid: 217d199ec55b3194f9e3b507593dd3d0, type: 3}
   localPositionOffset: {x: 0, y: 0, z: 0.5}
   localRotation: {x: 0, y: 0, z: 0}

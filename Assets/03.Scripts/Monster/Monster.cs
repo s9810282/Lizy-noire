@@ -64,6 +64,15 @@ public class Monster : MonoBehaviour, IDamageAble
 
             SetAnimTrigger("Die");
             hpBar.HideHpBar(false);
+
+            EventBus.Publish(new EffectRequest
+            {
+                effectCode = "MonsterDeath" + name,
+                type = EffectType.DeathSpark,
+                parent = transform,
+                offset = new Vector3(0f, 0.5f, 0f),
+            });
+
             Destroy(gameObject, 1.5f);
         }
     }
@@ -88,6 +97,9 @@ public class Monster : MonoBehaviour, IDamageAble
 
     public void HitPlayer()
     {
+        if (isGroggy)
+            StopCoroutine("WaitGroggy");
+
         Debug.Log("Hit Player");
         isGroggy = true;
         SetAnimTrigger("Down");
@@ -100,6 +112,7 @@ public class Monster : MonoBehaviour, IDamageAble
             duration = data.groggyDuration
         });
 
+        
         StartCoroutine(WaitGroggy());
     }
 
@@ -109,6 +122,8 @@ public class Monster : MonoBehaviour, IDamageAble
         if (!isGroggy)
             SetAnimTrigger("Walk");
     }
+
+    Coroutine groggyCoroutine;
     IEnumerator WaitGroggy()
     {
         yield return new WaitForSeconds(data.groggyDuration * 0.8f);

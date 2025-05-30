@@ -4726,18 +4726,28 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   effectList:
+  - type: 0
+    data: {fileID: 11400000, guid: 2421fd4ec20b64f49bf84cc64a861b8d, type: 2}
   - type: 4
-    data: {fileID: 11400000, guid: 17c4cabf0c09bb248ab28bbc550fc030, type: 2}
-  - type: 5
-    data: {fileID: 11400000, guid: 1b2b87f8f0856f8479b18c7ac69deac2, type: 2}
+    data: {fileID: 11400000, guid: 7e4dc9b3949fe4d48823c337a984a80d, type: 2}
   - type: 1
     data: {fileID: 11400000, guid: 6fcc7b857b4ae8448a5ef327c2409254, type: 2}
   - type: 2
     data: {fileID: 11400000, guid: e287655a2b87a9847b66b479a9cd32c1, type: 2}
+  - type: 5
+    data: {fileID: 11400000, guid: cea9a5fdeb1585741a9b4d122db4e326, type: 2}
   - type: 6
+    data: {fileID: 11400000, guid: 78a2084e7d38d4349a5c1030ec03a516, type: 2}
+  - type: 7
+    data: {fileID: 11400000, guid: 17c4cabf0c09bb248ab28bbc550fc030, type: 2}
+  - type: 8
+    data: {fileID: 11400000, guid: 726f3bd31ee0974498e1629cc1de0680, type: 2}
+  - type: 9
+    data: {fileID: 11400000, guid: 1b2b87f8f0856f8479b18c7ac69deac2, type: 2}
+  - type: 10
     data: {fileID: 11400000, guid: 642f8f94e5bd1084dafa84fa9f538c2b, type: 2}
-  - type: 0
-    data: {fileID: 11400000, guid: 2421fd4ec20b64f49bf84cc64a861b8d, type: 2}
+  - type: 11
+    data: {fileID: 11400000, guid: 4b866c556c4ab1a4abf36f3bf047876e, type: 2}
 --- !u!1 &159745152
 GameObject:
   m_ObjectHideFlags: 0

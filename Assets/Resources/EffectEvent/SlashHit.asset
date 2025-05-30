@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9a60d6a5ffd95814bb5cc21e9cc33a84, type: 3}
   m_Name: SlashHit
   m_EditorClassIdentifier: 
-  effectName: 
+  effectName: SlashHit
   effectPrefab: {fileID: 5238538877814813142, guid: 99f7bb90bfdb9014d9d6c8c5151f951c, type: 3}
   localPositionOffset: {x: 0, y: -1, z: 0.5}
   localRotation: {x: -90, y: 0, z: 0}

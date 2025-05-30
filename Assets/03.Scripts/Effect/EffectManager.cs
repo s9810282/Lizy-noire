@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -10,9 +11,15 @@ public enum EffectType
     SlashHit,
     Ult,
 
+    BlowSpark,
+    SlashSpark,
+    DeathSpark,
+
     Stun,
-    DamageAble,
+    LongStun,
+    Invinsible,
     SpeedUp,
+    SpeedDown,
 }
 
 
@@ -63,6 +70,10 @@ public class EffectManager  : MonoBehaviour
             Debug.LogWarning($"EffectType '{req.type}' not registered.");
             return;
         }
+        else if(currentEffects.ContainsKey(req.effectCode))
+        {
+            RemoveEffectRequested(req.effectCode);
+        }
 
         GameObject fx = Instantiate(data.effectPrefab, req.parent);
         fx.transform.localPosition = data.localPositionOffset + req.offset;
@@ -78,5 +89,12 @@ public class EffectManager  : MonoBehaviour
 
         Destroy(currentEffects[code].obj);
         currentEffects.Remove(code);
+    }
+
+
+    IEnumerator RemoveEffectCoroutine(string code, float duration)
+    {
+        yield return new WaitForSeconds(duration);
+        RemoveEffectRequested(code);
     }
 }

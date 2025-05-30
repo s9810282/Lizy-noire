@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9a60d6a5ffd95814bb5cc21e9cc33a84, type: 3}
-  m_Name: DamageAble
+  m_Name: SlashSpark
   m_EditorClassIdentifier: 
-  effectName: Invinsible
-  effectPrefab: {fileID: 4515497926535975121, guid: f16d40787832af04082ff22bef7ab660, type: 3}
+  effectName: Slash Spark
+  effectPrefab: {fileID: 5311822222097888237, guid: 1da815c1da9edfe4989ecab2d5c83b38, type: 3}
   localPositionOffset: {x: 0, y: 0, z: 0}
-  localRotation: {x: -90, y: 0, z: 0}
+  localRotation: {x: 0, y: 0, z: 0}
   localScale: {x: 1, y: 1, z: 1}
