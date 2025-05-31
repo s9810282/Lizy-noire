@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.Behavior;
 using UnityEngine;
+using static EventManager;
 
 public enum RelativeDirection
 {
@@ -65,15 +66,18 @@ public class Monster : MonoBehaviour, IDamageAble
             SetAnimTrigger("Die");
             hpBar.HideHpBar(false);
 
-            EventBus.Publish(new EffectRequest
+            EventBus.Publish(new DeathEvent
             {
-                effectCode = "MonsterDeath" + name,
-                type = EffectType.DeathSpark,
-                parent = transform,
-                offset = new Vector3(0f, 0.5f, 0f),
+                target = this.gameObject,
+                duration = 1f,
+                req = new EffectRequest
+                {
+                    effectCode = "MonsterDeath" + name,
+                    type = EffectType.DeathSpark,
+                    parent = transform,
+                    offset = new Vector3(0f, 0.5f, 0f),
+                }
             });
-
-            Destroy(gameObject, 1.5f);
         }
     }
 

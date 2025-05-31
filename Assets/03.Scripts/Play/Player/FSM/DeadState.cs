@@ -1,4 +1,5 @@
 using UnityEngine;
+using static EventManager;
 
 public class DeadState : IState
 {
@@ -13,12 +14,17 @@ public class DeadState : IState
     {
         player.PlayerState = EPlayerState.Dead;
 
-        EventBus.Publish(new EffectRequest
+        EventBus.Publish(new DeathEvent
         {
-            effectCode = "PlayerDeath",
-            type = EffectType.DeathSpark,
-            offset = player.gameObject.transform.position,
-            parent = null,
+            target = player.gameObject,
+            duration = 1f,
+            req = new EffectRequest
+            {
+                effectCode = "PlayerDeath",
+                type = EffectType.DeathSpark,
+                offset = player.gameObject.transform.position,
+                parent = null,
+            }
         });
     }
 
@@ -29,6 +35,6 @@ public class DeadState : IState
 
     public void Exit() 
     { 
-        EventBus.Publish("PlayerDeath"); 
+        
     }
 }

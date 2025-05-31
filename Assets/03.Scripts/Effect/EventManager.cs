@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-
 public enum EffectType
 {
     Blow,
@@ -23,9 +22,31 @@ public enum EffectType
 }
 
 
-
-public class EffectManager  : MonoBehaviour
+public class EventManager  : MonoBehaviour
 {
+  
+    public List<EffectEntry> effectList;
+
+    private Dictionary<EffectType, EffectData> effectDict;
+    private Dictionary<string, EffectObj> currentEffects = new Dictionary<string, EffectObj>();
+
+    private void OnEnable()
+    {
+        effectDict = effectList.ToDictionary(e => e.type, e => e.data);
+        EventBus.Subscribe<EffectRequest>(OnEffectRequested);
+        EventBus.Subscribe<string>(RemoveEffectRequested);
+    }
+
+    private void OnDisable()
+    {
+        EventBus.Unsubscribe<EffectRequest>(OnEffectRequested);
+        EventBus.Unsubscribe<string>(RemoveEffectRequested);
+    }
+
+
+    #region Effect 
+
+
     [System.Serializable]
     public class EffectEntry
     {
@@ -45,23 +66,6 @@ public class EffectManager  : MonoBehaviour
         }
     }
 
-    public List<EffectEntry> effectList;
-
-    private Dictionary<EffectType, EffectData> effectDict;
-    private Dictionary<string, EffectObj> currentEffects = new Dictionary<string, EffectObj>();
-
-    private void OnEnable()
-    {
-        effectDict = effectList.ToDictionary(e => e.type, e => e.data);
-        EventBus.Subscribe<EffectRequest>(OnEffectRequested);
-        EventBus.Subscribe<string>(RemoveEffectRequested);
-    }
-
-    private void OnDisable()
-    {
-        EventBus.Unsubscribe<EffectRequest>(OnEffectRequested);
-        EventBus.Unsubscribe<string>(RemoveEffectRequested);
-    }
 
     private void OnEffectRequested(EffectRequest req)
     {
@@ -82,7 +86,6 @@ public class EffectManager  : MonoBehaviour
 
         currentEffects.Add(req.effectCode, new EffectObj(req.type, fx));
     }
-
     private void RemoveEffectRequested(string code)
     {
         if (!currentEffects.ContainsKey(code)) return;
@@ -91,10 +94,33 @@ public class EffectManager  : MonoBehaviour
         currentEffects.Remove(code);
     }
 
+    #endregion
 
-    IEnumerator RemoveEffectCoroutine(string code, float duration)
+
+    private void OnDeath(DeathEvent e)
     {
-        yield return new WaitForSeconds(duration);
-        RemoveEffectRequested(code);
+        Debug.Log($"Á×Àº ´ë»ó: {e.target.name}");
+        
+        OnEffectRequested(e.req);
+        StartCoroutine(WaitEventDestroy(e));
     }
+
+    IEnumerator WaitEventDestroy(DeathEvent e)
+    {
+        yield return new WaitForSeconds(e.duration);
+        RemoveEffectRequested(e.req.effectCode);
+        Destroy(e.target);
+    }
+
+
+    public struct DeathEvent
+    {
+        public GameObject target;
+        public float duration;
+
+        public EffectRequest req;
+    }
+
+
+
 }

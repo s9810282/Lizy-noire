@@ -356,6 +356,18 @@ public class PlayerController : MonoBehaviour, IEffectTarget, IDamageAble
 
                 StartCoroutine(RemoveEffect("PlayerBlow", 0.5f));
 
+
+
+                EventBus.Publish(new EffectRequest
+                {
+                    effectCode = "MonsterBlueSpark" + target.name,
+                    type = EffectType.BlowSpark,
+                    offset = transform.position,
+                    parent = null,
+                });
+
+                StartCoroutine(RemoveEffect("MonsterBlueSpark" + target.name, 0.5f));
+
                 target.RemoveShield(toPlayer);
                 target.TakeDamage(atk);
 
@@ -385,6 +397,7 @@ public class PlayerController : MonoBehaviour, IEffectTarget, IDamageAble
 
                 StartCoroutine(RemoveEffect("PlayerSlash", 0.5f));
 
+
                 if (!target.CheckShield(toPlayer))
                 {
                     EventBus.Publish(new EffectRequest
@@ -396,6 +409,17 @@ public class PlayerController : MonoBehaviour, IEffectTarget, IDamageAble
                     });
 
                     StartCoroutine(RemoveEffect("PlayerSlashHit", 0.5f));
+
+
+                    EventBus.Publish(new EffectRequest
+                    {
+                        effectCode = "MonsterRedSpark" + target.name,
+                        type = EffectType.SlashSpark,
+                        offset = transform.position,
+                        parent = null,
+                    });
+
+                    StartCoroutine(RemoveEffect("MonsterRedSpark" + target.name, 0.5f));
 
                     IsKnockedBack = false;
                     target.TakeDamage(9999);
