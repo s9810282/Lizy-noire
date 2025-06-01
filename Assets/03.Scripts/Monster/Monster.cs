@@ -52,6 +52,7 @@ public class Monster : MonoBehaviour, IDamageAble
     public void TakeDamage(float damage)
     {
         HitPlayer();
+
         currentHP -= damage;
         hpBar.SetHP(currentHP, data.maxHp);
         hpBar.HideHpBar(true);
@@ -60,7 +61,6 @@ public class Monster : MonoBehaviour, IDamageAble
         if (currentHP <= 0)
         {
             bt.enabled = false;
-            animator.enabled = false;
             col.enabled = false;
 
             SetAnimTrigger("Die");
@@ -69,7 +69,7 @@ public class Monster : MonoBehaviour, IDamageAble
             EventBus.Publish(new DeathEvent
             {
                 target = this.gameObject,
-                duration = 1f,
+                duration = 2f,
                 req = new EffectRequest
                 {
                     effectCode = "MonsterDeath" + name,
@@ -99,6 +99,18 @@ public class Monster : MonoBehaviour, IDamageAble
     }
 
 
+    public void AttackPlayer()
+    {
+        if (isGroggy)
+            StopCoroutine("WaitAttackGroggy");
+
+        Debug.Log("Attack Player");
+        isGroggy = true;
+        SetAnimTrigger("Hit");
+
+        StartCoroutine(WaitAttackGroggy());
+    }
+
     public void HitPlayer()
     {
         if (isGroggy)
@@ -120,14 +132,12 @@ public class Monster : MonoBehaviour, IDamageAble
         StartCoroutine(WaitGroggy());
     }
 
-
     public void CheckGroggyAnim()
     {
         if (!isGroggy)
             SetAnimTrigger("Walk");
     }
 
-    Coroutine groggyCoroutine;
     IEnumerator WaitGroggy()
     {
         yield return new WaitForSeconds(data.groggyDuration * 0.8f);
@@ -140,6 +150,21 @@ public class Monster : MonoBehaviour, IDamageAble
             SetAnimTrigger("Walk");
             
     }
+
+    IEnumerator WaitAttackGroggy()
+    {
+        yield return new WaitForSeconds(data.groggyDuration);
+        isGroggy = false;
+
+        if (isMove)
+            SetAnimTrigger("Walk");
+        else
+            SetAnimTrigger("Idle");
+    }
+
+
+
+
     public Node.Status Move()
     {
         if (isGroggy) return Node.Status.Running;

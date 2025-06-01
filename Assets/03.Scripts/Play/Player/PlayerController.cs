@@ -23,7 +23,11 @@ public class PlayerController : MonoBehaviour, IEffectTarget, IDamageAble
     [SerializeField] private float moveSpeedModifier = 0f;
     [SerializeField] private float currentMoveSpeed = 5f;
     [SerializeField] private float rotateSpeed = 1080f;
-    
+    [SerializeField] private int maxboostCount = 3;
+    [SerializeField] private int boostCount = 3;
+    [SerializeField] private float boostRecoveryTime = 2;
+    [SerializeField] private int getDamageValue = 0;
+
     [Space(15f)]
 
     [Header("Player KnockBack")]
@@ -49,6 +53,9 @@ public class PlayerController : MonoBehaviour, IEffectTarget, IDamageAble
     [SerializeField] Vector3 inputDirection = Vector3.zero;
     [SerializeField] Vector3 targetPosition;
 
+
+
+    float boostTimer;
 
     #region Property
 
@@ -86,6 +93,9 @@ public class PlayerController : MonoBehaviour, IEffectTarget, IDamageAble
 
     private void Start()
     {
+        boostCount = maxboostCount;
+        boostTimer = 0;
+
         targetPosition = SnapToGrid(transform.position);
         transform.position = targetPosition;
 
@@ -103,7 +113,6 @@ public class PlayerController : MonoBehaviour, IEffectTarget, IDamageAble
         fsmMachine.Update();
         statusEffectManager.Update();
 
-        return;
 
         if(Input.GetMouseButtonDown(0))
         {
@@ -112,6 +121,18 @@ public class PlayerController : MonoBehaviour, IEffectTarget, IDamageAble
             else
                 playerAttackType = EAttakcType.Blow;
         }
+
+        if(boostCount < maxboostCount)
+        {
+            boostTimer += Time.deltaTime;
+
+            if(boostTimer > boostRecoveryTime)
+            {
+                UpdateBoostCount(1);
+                boostTimer = 0;
+            }
+        }
+
     }
 
 
@@ -155,18 +176,22 @@ public class PlayerController : MonoBehaviour, IEffectTarget, IDamageAble
             Debug.Log("Bad Early");
             KnockbackBeforeStatus = new ExhaustionBuff("경직", 2f, this, EStatusEffect.Exhaustion, baseMoveSpeed, 25);
         }
-        else if (yPos > landingMin) //부스트
+        else if (yPos > landingMin && boostCount > 0) //부스트
         {
             //부스트 활성화 시 끝나는 것도 체크해야함
             //부스트 남은 횟수, 그에 따른 시간 등 체크
             Debug.Log("Good");
+
+            boostTimer = 0;
+            UpdateBoostCount(-1);
+            
             KnockbackBeforeStatus = new SpeedBuff("부스트 속도 업", 3f, this, EStatusEffect.SpeedUp, baseMoveSpeed/2f);
-            KnockbackBeforeState = new BoostState(this, 3f);
+            KnockbackBeforeState = new BoostState(this, 3f, isExhaustion:boostCount == 0);
         }
         else //경직
         {
             Debug.Log("Bad Late");
-            KnockbackBeforeStatus = new ExhaustionBuff("경직", 2f, this, EStatusEffect.Exhaustion, baseMoveSpeed, 25);
+            
         }
     }
 
@@ -313,7 +338,7 @@ public class PlayerController : MonoBehaviour, IEffectTarget, IDamageAble
 
         if (statusEffectManager.CheckStatus(EStatusEffect.Exhaustion))
         {
-            target.HitPlayer();
+            target.AttackPlayer();
             ((IDamageAble)this).TakeDamage(target.Data.damage);
 
             distance = 1f;
@@ -362,7 +387,7 @@ public class PlayerController : MonoBehaviour, IEffectTarget, IDamageAble
                 {
                     effectCode = "MonsterBlueSpark" + target.name,
                     type = EffectType.BlowSpark,
-                    offset = transform.position,
+                    offset = target.transform.position,
                     parent = null,
                 });
 
@@ -398,6 +423,18 @@ public class PlayerController : MonoBehaviour, IEffectTarget, IDamageAble
                 StartCoroutine(RemoveEffect("PlayerSlash", 0.5f));
 
 
+
+                EventBus.Publish(new EffectRequest
+                {
+                    effectCode = "MonsterRedSpark" + target.name,
+                    type = EffectType.SlashSpark,
+                    offset = target.transform.position,
+                    parent = null,
+                });
+
+                StartCoroutine(RemoveEffect("MonsterRedSpark" + target.name, 0.5f));
+
+
                 if (!target.CheckShield(toPlayer))
                 {
                     EventBus.Publish(new EffectRequest
@@ -409,17 +446,6 @@ public class PlayerController : MonoBehaviour, IEffectTarget, IDamageAble
                     });
 
                     StartCoroutine(RemoveEffect("PlayerSlashHit", 0.5f));
-
-
-                    EventBus.Publish(new EffectRequest
-                    {
-                        effectCode = "MonsterRedSpark" + target.name,
-                        type = EffectType.SlashSpark,
-                        offset = transform.position,
-                        parent = null,
-                    });
-
-                    StartCoroutine(RemoveEffect("MonsterRedSpark" + target.name, 0.5f));
 
                     IsKnockedBack = false;
                     target.TakeDamage(9999);
@@ -526,6 +552,18 @@ public class PlayerController : MonoBehaviour, IEffectTarget, IDamageAble
     {
         anim.SetInteger(id, type);
     }
+    public void UpdateGetDamageValue(int value)
+    { 
+        getDamageValue = value;
+    }
+    public void UpdateBoostCount(int value)
+    {
+        boostCount += value;
+
+        if (boostCount < 0) boostCount = 0;
+        if (boostCount > maxboostCount) boostCount = maxboostCount;
+    }
+
     #endregion
 
 

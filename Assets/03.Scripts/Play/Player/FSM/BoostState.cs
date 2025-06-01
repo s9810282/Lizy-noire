@@ -4,13 +4,18 @@ using UnityEngine.Rendering;
 public class BoostState : TimedState
 {
     Vector3 boostDir;
+    bool isExhaustion = false;
+
     private Vector3 targetforward = Vector3.zero;
 
-    public BoostState(PlayerController player, float duration, float damageValue = 0)
+
+    public BoostState(PlayerController player, float duration, float damageValue = 0, bool isExhaustion = false)
        : base(player, duration, damageValue)
     {
         boostDir = 
             player.InputDirection != Vector3.zero ? player.InputDirection : player.transform.forward;
+
+        this.isExhaustion = isExhaustion;
     }
 
     public override void Enter()
@@ -66,8 +71,9 @@ public class BoostState : TimedState
     public override void ExitToDefaultState()
     {
         player.FSMMachine.ChangeState(new MoveState(player, true));
-        player.AddEffect(
-            new ExhaustionBuff("Å»Áø", 2f, player, EStatusEffect.Exhaustion, player.BaseMoveSpeed/2, 25, isEffect: false));
+
+        if(isExhaustion)
+            player.AddEffect( new ExhaustionBuff("Å»Áø", 2f, player, EStatusEffect.Exhaustion, player.BaseMoveSpeed/2, 25, isEffect: false));
     }
 
 

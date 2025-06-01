@@ -10,6 +10,7 @@ public class ExhaustionBuff : StatusEffect
     float damageValue;
 
     bool isWall = false;
+    string code = "";
 
     public ExhaustionBuff
         (string name, float duration, IEffectTarget target, EStatusEffect eStatusEffect, float value, float damageValue2, bool isWall = false, bool isEffect = true) 
@@ -24,22 +25,29 @@ public class ExhaustionBuff : StatusEffect
     {
         Target.SetDamaAble(true);
         Target.ModifyMoveSpeed(-speedValue);
-       
-        if(isEffect)
+        
+        EffectType e;
+
+        if (isEffect)
         {
-            EffectType e;
+            code = "PlayerExhaust";
 
             if (isWall) e = EffectType.LongStun;
             else e = EffectType.Stun;
-
-            EventBus.Publish(new EffectRequest
-            {
-                effectCode = "PlayerExhaust",
-                type = e,
-                parent = Target.GetTarget(),
-                duration = Duration
-            });
         }
+        else
+        {
+            code = "PlayerSpeedDown";
+            e = EffectType.SpeedDown;
+        }
+
+        EventBus.Publish(new EffectRequest
+        {
+            effectCode = code,
+            type = e,
+            parent = Target.GetTarget(),
+            duration = Duration
+        });
     }
 
     public override void UpdateEffect()
@@ -52,6 +60,6 @@ public class ExhaustionBuff : StatusEffect
         Target.SetDamaAble(false);
         Target.ModifyMoveSpeed(speedValue);
 
-        EventBus.Publish("PlayerExhaust");
+        EventBus.Publish(code);
     }
 }

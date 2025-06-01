@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: SpeedDown
   m_EditorClassIdentifier: 
   effectName: Speed Down
-  effectPrefab: {fileID: 7633627646954404978, guid: 14fa01939f5d01147b435af2f3d52b7c, type: 3}
-  localPositionOffset: {x: 0, y: 0.5, z: 0}
-  localRotation: {x: 90, y: 0, z: 0}
+  effectPrefab: {fileID: 2613943191161085124, guid: e89a6bdbbe13db740abec0d10a625a80, type: 3}
+  localPositionOffset: {x: 0, y: 1, z: 0}
+  localRotation: {x: -90, y: 0, z: 0}
   localScale: {x: 1, y: 1, z: 1}

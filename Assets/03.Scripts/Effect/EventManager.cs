@@ -33,13 +33,16 @@ public class EventManager  : MonoBehaviour
     private void OnEnable()
     {
         effectDict = effectList.ToDictionary(e => e.type, e => e.data);
+
         EventBus.Subscribe<EffectRequest>(OnEffectRequested);
+        EventBus.Subscribe<DeathEvent>(OnDeath);
         EventBus.Subscribe<string>(RemoveEffectRequested);
     }
 
     private void OnDisable()
     {
         EventBus.Unsubscribe<EffectRequest>(OnEffectRequested);
+        EventBus.Unsubscribe<DeathEvent>(OnDeath);
         EventBus.Unsubscribe<string>(RemoveEffectRequested);
     }
 

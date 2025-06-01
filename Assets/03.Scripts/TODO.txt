@@ -21,12 +21,15 @@ IDamageAble을 써서 좀 더 캡슐화가 되지ㅏ않을까 싶긴한데
 이게 힘든게 TakeDamage는 float값만 받을 수 있는데 말이죠..
 
 
-1. 부스트 유지시간 3.5초에서 3초로 변경 / 부스트 3번 사용 후 Exhaust상태에 들어가도록 수정 필요
+O 1. 부스트 유지시간 3.5초에서 3초로 변경 / 부스트 3번 사용 후 Exhaust상태에 들어가도록 수정 필요
 O 2. 현재 플레이어가 Exhuast 상태가 되었을 때 Stun 이펙트 적용중 → Stun 이펙트 제거 필요
-3. 플레이어가 NormalStun, NormalDown, SpecialStun, SpecialDown, Exhaust 일때 몬스터와 충돌하면(즉, 플레이어가 데미지를 받게 되는 경우)
+
+O 3. 플레이어가 NormalStun, NormalDown, SpecialStun, SpecialDown, Exhaust 일때 몬스터와 충돌하면(즉, 플레이어가 데미지를 받게 되는 경우)
 몬스터에게 damage 애니메이션 적용 및 1초동안 정지 필요 (그 자리에서 움직이지 않음)
+
  4. 그 외에 모든 상황에서 플레이어가 적과 충돌하면 blow, slash에 상관없이 몬스터 애니메이션은 Down → Up 적용 (현재는 blow일때, 데미지를 받는 상황일때 down → 
 up 적용중)
+
 O 5. Basic Slash(Blue), Basic Slash(Red)가 발생하는 조건에서 몬스터에게도 발생하는 이펙트가 필요 →  몬스터에게는 이펙트 각각 BlueSpark, RedSpark 적용
 O 6. 벽과 부딪쳤을때 (NormalStun, SpecialStun) 캐릭터 이펙트는 StrongStun 적용
 O 7.  몬스터/플레이어 사망 시 오브젝트 즉시 삭제 및 DeadSpark이펙트 적용
@@ -38,6 +41,8 @@ O 9. 연속 부스트를 이용해서 적을 처치하면 게임 중단되는 현상 있음
 12. 부스트 게이지, HP게이지 추가 필요
 
 
-Death 이펙트 삭제 이벤트 관련 EventBus에서 구조체로 운영해야할 듯 함
-부스트는 끝날 때 playerboostCount 체크해서 탈진 여부 확인
-이펙트들 끝날 때 처리는 필요함.
+boost 회복처리.
+
+
+
+이러면 스턴이랑 탈진의 구분이 필요해짐

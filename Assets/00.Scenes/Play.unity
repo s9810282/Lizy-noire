@@ -20039,7 +20039,7 @@ MonoBehaviour:
     InsfectorList: 
   anim: {fileID: 1570884003}
   player: {fileID: 547463112}
-  playerAttackType: 1
+  playerAttackType: 0
   playerState: 3
   maxHp: 100
   hp: 100
@@ -20048,6 +20048,10 @@ MonoBehaviour:
   moveSpeedModifier: 0
   currentMoveSpeed: 5
   rotateSpeed: 1080
+  maxboostCount: 3
+  boostCount: 3
+  boostRecoveryTime: 2
+  getDamageValue: 0
   landingTime: 0.6
   landingMin: 0.5
   landingMax: 2
