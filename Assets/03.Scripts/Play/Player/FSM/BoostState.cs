@@ -22,6 +22,8 @@ public class BoostState : TimedState
     {
         base.Enter();
 
+        player.UpdateBoostCount(-1);
+
         if (CheckWall()) return;
         if (CheckBounce()) return;
 

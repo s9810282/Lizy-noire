@@ -3,7 +3,7 @@ using Unity.AppUI.UI;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class PlayerController : MonoBehaviour, IEffectTarget, IDamageAble
+public class PlayerController : MonoBehaviour, IEffectTarget
 {
     [Header("System")]
     [SerializeField] StateMachine fsmMachine;
@@ -26,6 +26,7 @@ public class PlayerController : MonoBehaviour, IEffectTarget, IDamageAble
     [SerializeField] private int maxboostCount = 3;
     [SerializeField] private int boostCount = 3;
     [SerializeField] private float boostRecoveryTime = 2;
+    [SerializeField] private float boostRemindTime = 2;
     [SerializeField] private int getDamageValue = 0;
 
     [Space(15f)]
@@ -56,6 +57,7 @@ public class PlayerController : MonoBehaviour, IEffectTarget, IDamageAble
 
 
     float boostTimer;
+    float boostRemindTimer;
 
     #region Property
 
@@ -95,6 +97,7 @@ public class PlayerController : MonoBehaviour, IEffectTarget, IDamageAble
     {
         boostCount = maxboostCount;
         boostTimer = 0;
+        boostRemindTimer = 0;
 
         targetPosition = SnapToGrid(transform.position);
         transform.position = targetPosition;
@@ -105,7 +108,13 @@ public class PlayerController : MonoBehaviour, IEffectTarget, IDamageAble
 
         fsmMachine.ChangeState(new IdleState(this));
         anim.SetBool("isMove", false);
-        
+
+        EventBus.Publish(playerAttackType);
+        EventBus.Publish(new BoostUIEvent { 
+            boostCount = this.boostCount,
+            timer = 0f,
+            maxtimer = 0f
+        });
     }
 
     private void Update()
@@ -120,19 +129,28 @@ public class PlayerController : MonoBehaviour, IEffectTarget, IDamageAble
                 playerAttackType = EAttakcType.Slash;
             else
                 playerAttackType = EAttakcType.Blow;
+
+            EventBus.Publish(playerAttackType);
         }
 
-        if(boostCount < maxboostCount)
+
+        boostRemindTimer += Time.deltaTime;
+
+        if (boostCount < maxboostCount)
         {
+            EventBus.Publish(new BoostUIEvent
+            {
+                boostCount = this.boostCount,
+                timer = boostTimer,
+                maxtimer = boostRecoveryTime,
+            });
+
+            if (boostRemindTimer < boostRemindTime) return;
+            
             boostTimer += Time.deltaTime;
 
-            if(boostTimer > boostRecoveryTime)
-            {
-                UpdateBoostCount(1);
-                boostTimer = 0;
-            }
+            if(boostTimer > boostRecoveryTime) UpdateBoostCount(1);            
         }
-
     }
 
 
@@ -182,16 +200,13 @@ public class PlayerController : MonoBehaviour, IEffectTarget, IDamageAble
             //부스트 남은 횟수, 그에 따른 시간 등 체크
             Debug.Log("Good");
 
-            boostTimer = 0;
-            UpdateBoostCount(-1);
-            
             KnockbackBeforeStatus = new SpeedBuff("부스트 속도 업", 3f, this, EStatusEffect.SpeedUp, baseMoveSpeed/2f);
             KnockbackBeforeState = new BoostState(this, 3f, isExhaustion:boostCount == 0);
         }
         else //경직
         {
             Debug.Log("Bad Late");
-            
+            KnockbackBeforeStatus = new ExhaustionBuff("경직", 2f, this, EStatusEffect.Exhaustion, baseMoveSpeed, 25);
         }
     }
 
@@ -316,6 +331,8 @@ public class PlayerController : MonoBehaviour, IEffectTarget, IDamageAble
 
     public void StartKnockback(Vector3 direction, Monster target, float distance = 2f, float height = 1f, float duration = 0.4f)
     {
+        ResetBoostTimer();
+
         RotateInstantly(-direction);
         
         IsKnockedBack = true;
@@ -339,7 +356,7 @@ public class PlayerController : MonoBehaviour, IEffectTarget, IDamageAble
         if (statusEffectManager.CheckStatus(EStatusEffect.Exhaustion))
         {
             target.AttackPlayer();
-            ((IDamageAble)this).TakeDamage(target.Data.damage);
+            TakeDamage(target.Data.damage);
 
             distance = 1f;
             isTryLanding = true;
@@ -382,19 +399,8 @@ public class PlayerController : MonoBehaviour, IEffectTarget, IDamageAble
                 StartCoroutine(RemoveEffect("PlayerBlow", 0.5f));
 
 
-
-                EventBus.Publish(new EffectRequest
-                {
-                    effectCode = "MonsterBlueSpark" + target.name,
-                    type = EffectType.BlowSpark,
-                    offset = target.transform.position,
-                    parent = null,
-                });
-
-                StartCoroutine(RemoveEffect("MonsterBlueSpark" + target.name, 0.5f));
-
                 target.RemoveShield(toPlayer);
-                target.TakeDamage(atk);
+                target.TakeDamage(atk, playerAttackType);
 
                 if (RaycaseWall(direction, out RaycastHit hit, distance)) //스턴
                 {
@@ -412,6 +418,7 @@ public class PlayerController : MonoBehaviour, IEffectTarget, IDamageAble
             }
             else if(playerAttackType == EAttakcType.Slash)
             {
+
                 EventBus.Publish(new EffectRequest
                 {
                     effectCode = "PlayerSlash",
@@ -423,32 +430,10 @@ public class PlayerController : MonoBehaviour, IEffectTarget, IDamageAble
                 StartCoroutine(RemoveEffect("PlayerSlash", 0.5f));
 
 
-
-                EventBus.Publish(new EffectRequest
-                {
-                    effectCode = "MonsterRedSpark" + target.name,
-                    type = EffectType.SlashSpark,
-                    offset = target.transform.position,
-                    parent = null,
-                });
-
-                StartCoroutine(RemoveEffect("MonsterRedSpark" + target.name, 0.5f));
-
-
                 if (!target.CheckShield(toPlayer))
                 {
-                    EventBus.Publish(new EffectRequest
-                    {
-                        effectCode = "PlayerSlashHit",
-                        type = EffectType.SlashHit,
-                        offset = transform.position,
-                        parent = null,
-                    });
-
-                    StartCoroutine(RemoveEffect("PlayerSlashHit", 0.5f));
-
                     IsKnockedBack = false;
-                    target.TakeDamage(9999);
+                    target.TakeDamage(9999, playerAttackType);
 
                     ResetInput();
                     fsmMachine.ChangeState(new IdleState(this));
@@ -456,7 +441,7 @@ public class PlayerController : MonoBehaviour, IEffectTarget, IDamageAble
                 }
                 else
                 {
-                    //AnimSetInt("KnockBack", 2);
+                    target.HitedPlayer();
 
                     isTryLanding = true;
 
@@ -504,8 +489,11 @@ public class PlayerController : MonoBehaviour, IEffectTarget, IDamageAble
             pos.y += yOffset;
             transform.position = pos;
 
-            if (t >= landingTime)
+            if (t >= landingTime && !isFalling)
+            {
                 isFalling = true;
+                EventBus.Publish(new SpaceToggleEvent());
+            }
 
             RotateTowardsDirection(-dir);
 
@@ -518,7 +506,8 @@ public class PlayerController : MonoBehaviour, IEffectTarget, IDamageAble
         IsKnockedBack = false;
 
         fsmMachine.ChangeState(KnockbackBeforeState);
-        statusEffectManager.AddEffect(KnockbackBeforeStatus);   
+        statusEffectManager.AddEffect(KnockbackBeforeStatus);
+        EventBus.Publish(new SpaceToggleEvent());
     }
 
     #endregion
@@ -558,11 +547,18 @@ public class PlayerController : MonoBehaviour, IEffectTarget, IDamageAble
     }
     public void UpdateBoostCount(int value)
     {
+        boostTimer = 0;
         boostCount += value;
 
         if (boostCount < 0) boostCount = 0;
         if (boostCount > maxboostCount) boostCount = maxboostCount;
     }
+    public void ResetBoostTimer()
+    {
+        boostRemindTimer = 0;
+        boostTimer = 0;
+    }
+    
 
     #endregion
 
@@ -570,7 +566,7 @@ public class PlayerController : MonoBehaviour, IEffectTarget, IDamageAble
 
     #region IDamage
 
-    void IDamageAble.TakeDamage(float damage)
+    void TakeDamage(float damage)
     {
         hp -= damage;
 
@@ -593,7 +589,7 @@ public class PlayerController : MonoBehaviour, IEffectTarget, IDamageAble
     }
     void IEffectTarget.TakeTickDamage(float value)
     {
-        ((IDamageAble)this).TakeDamage(value);
+        TakeDamage(value);
     }
     void IEffectTarget.SetDamaAble(bool value)
     {

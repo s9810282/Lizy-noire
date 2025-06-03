@@ -102,11 +102,21 @@ public class EventManager  : MonoBehaviour
 
     private void OnDeath(DeathEvent e)
     {
-        Debug.Log($"Á×Àº ´ë»ó: {e.target.name}");
-        
+        if (currentEffects.ContainsKey("MonsterRedSpark" + e.target.name))
+        {
+            Debug.Log($"Á×Àº ´ë»ó: {e.target.name}");
+            RemoveEffectRequested("MonsterRedSpark");
+        }
+
+        if(currentEffects.ContainsKey("MonsterBlueSpark" + e.target.name))
+        {
+            RemoveEffectRequested("MonsterBlueSpark");
+        }
+
         OnEffectRequested(e.req);
         StartCoroutine(WaitEventDestroy(e));
     }
+
 
     IEnumerator WaitEventDestroy(DeathEvent e)
     {

@@ -18,6 +18,7 @@ public enum EPlayerState
 
 public enum EAttakcType
 {
+    None,
     Blow,
     Slash,
     Ult,

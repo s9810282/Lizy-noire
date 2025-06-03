@@ -1,5 +1,3 @@
-using JetBrains.Annotations;
-using NUnit.Framework;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Behavior;
@@ -33,6 +31,7 @@ public class Monster : MonoBehaviour, IDamageAble
     [SerializeField] float currentSpeed;
     [SerializeField] bool isGroggy = false;
     [SerializeField] bool isMove = false;
+    [SerializeField] bool isDead = false;
     [SerializeField] List<RelativeDirection> shieldDir = new List<RelativeDirection>();
 
     [SerializeField] PathNode targetNode;
@@ -49,17 +48,18 @@ public class Monster : MonoBehaviour, IDamageAble
     public PathNode TargetNode { get => targetNode; set => targetNode = value; }
     public List<PathNode> PathNodes { get => pathNodes; set => pathNodes = value; }
 
-    public void TakeDamage(float damage)
+    public void TakeDamage(float damage, EAttakcType e)
     {
-        HitPlayer();
+        HitedPlayer();
 
         currentHP -= damage;
         hpBar.SetHP(currentHP, data.maxHp);
         hpBar.HideHpBar(true);
 
-
         if (currentHP <= 0)
         {
+            isDead = true;
+
             bt.enabled = false;
             col.enabled = false;
 
@@ -79,6 +79,44 @@ public class Monster : MonoBehaviour, IDamageAble
                 }
             });
         }
+        else
+        {
+            if (e == EAttakcType.Blow)
+            {
+                EventBus.Publish(new EffectRequest
+                {
+                    effectCode = "MonsterBlueSpark" + name,
+                    type = EffectType.BlowSpark,
+                    offset = transform.position,
+                    parent = null,
+                });
+
+                StartCoroutine(RemoveEffect("MonsterBlueSpark" + name, 0.5f));
+            }
+            else if (e == EAttakcType.Slash)
+            {
+                EventBus.Publish(new EffectRequest
+                {
+                    effectCode = "MonsterRedSpark" + name,
+                    type = EffectType.SlashSpark,
+                    offset = transform.position,
+                    parent = null,
+                });
+
+                StartCoroutine(RemoveEffect("MonsterRedSpark" + name, 0.5f));
+
+
+                EventBus.Publish(new EffectRequest
+                {
+                    effectCode = "PlayerSlashHit",
+                    type = EffectType.SlashHit,
+                    offset = transform.position,
+                    parent = null,
+                });
+
+                StartCoroutine(RemoveEffect("PlayerSlashHit", 0.5f));
+            }
+        }
     }
 
     void Start()
@@ -93,28 +131,33 @@ public class Monster : MonoBehaviour, IDamageAble
         nextTargetNode = new PathNode();
         nextTargetNode.worldPosition = transform.position;
 
+        isGroggy = false;
+        isDead = false;
         isMove = false;
 
         AddShield();
     }
 
 
+    Coroutine attackCoroitine;
     public void AttackPlayer()
     {
         if (isGroggy)
-            StopCoroutine("WaitAttackGroggy");
+            StopCoroutine(attackCoroitine);
 
         Debug.Log("Attack Player");
         isGroggy = true;
         SetAnimTrigger("Hit");
 
-        StartCoroutine(WaitAttackGroggy());
+        attackCoroitine = StartCoroutine(WaitAttackGroggy());
     }
 
-    public void HitPlayer()
+
+    Coroutine hitCoroitine;
+    public void HitedPlayer()
     {
         if (isGroggy)
-            StopCoroutine("WaitGroggy");
+            StopCoroutine(hitCoroitine);
 
         Debug.Log("Hit Player");
         isGroggy = true;
@@ -128,8 +171,8 @@ public class Monster : MonoBehaviour, IDamageAble
             duration = data.groggyDuration
         });
 
-        
-        StartCoroutine(WaitGroggy());
+
+        hitCoroitine = StartCoroutine(WaitGroggy());
     }
 
     public void CheckGroggyAnim()
@@ -261,6 +304,11 @@ public class Monster : MonoBehaviour, IDamageAble
         animator.SetTrigger(name);
     }
 
+    IEnumerator RemoveEffect(string effectcode, float duration)
+    {
+        yield return new WaitForSeconds(duration);
+        EventBus.Publish(effectcode);
+    }
 
     #region Physcs
 

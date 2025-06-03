@@ -16,4 +16,4 @@ MonoBehaviour:
   effectPrefab: {fileID: 2030733174786669713, guid: 4e23644b11b6f544aa74aaaf4b7fa1d2, type: 3}
   localPositionOffset: {x: 0, y: 0, z: 0}
   localRotation: {x: 0, y: 0, z: 0}
-  localScale: {x: 1, y: 1, z: 1}
+  localScale: {x: 2, y: 2, z: 2}
