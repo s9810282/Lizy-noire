@@ -14,8 +14,6 @@ public partial class FindPatrolPosAction : Action
     
     protected override Status OnStart()
     {
-        //Debug.Log("Find Patrol Pos");
-
         PathNode current = PathFinder.Instance.pathFinding.grid.GetGridObject3D(Self.Value.gameObject.transform.position);
         List<PathNode> nodes = PathFinder.Instance.GetReachableNodes(current, Range.Value, Range.Value / 2);
         PathNode targetNode = nodes[UnityEngine.Random.Range(0, nodes.Count)];
@@ -34,5 +32,6 @@ public partial class FindPatrolPosAction : Action
     protected override void OnEnd()
     {
     }
+
 }
 

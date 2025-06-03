@@ -119,6 +119,11 @@ public class Monster : MonoBehaviour, IDamageAble
         }
     }
 
+    public void ShowHitSpark(EAttakcType e)
+    {
+
+    }
+
     void Start()
     {
         currentHP = data.maxHp;
@@ -239,6 +244,7 @@ public class Monster : MonoBehaviour, IDamageAble
 
         return Node.Status.Running;
     }
+
 
     public void UpdateTarget()
     {
@@ -405,14 +411,7 @@ public class Monster : MonoBehaviour, IDamageAble
         RelativeDirection dir = GetRelativeDirection(toPlayer);
         Debug.Log(dir);
 
-        if (shieldDir.Contains(dir))
-        {
-            return false;
-        }
-        else
-        {
-            return true;
-        }
+        return shieldDir.Contains(dir);
     }
     public void RemoveShield(Vector3 toPlayer)
     {

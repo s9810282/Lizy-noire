@@ -18,6 +18,6 @@ MonoBehaviour:
   maxHp: 120
   speed: 4
   monsterValue:
-    shieldDir: 3
+    shieldDir: 1
     monsterDrop: 500
     bounceDistance: 4

@@ -20494,7 +20494,7 @@ MonoBehaviour:
     InsfectorList: 
   anim: {fileID: 1570884003}
   player: {fileID: 547463112}
-  playerAttackType: 0
+  playerAttackType: 2
   playerState: 3
   maxHp: 100
   hp: 100

@@ -334,13 +334,14 @@ public class PlayerController : MonoBehaviour, IEffectTarget
     public void StartKnockback(Vector3 direction, Monster target, float distance = 2f, float height = 1f, float duration = 0.4f)
     {
         ResetBoostTimer();
-
-
         RotateInstantly(-direction);
-        
+
+        bool isSpace = true;
+
         IsKnockedBack = true;
         isTryLanding = false;
         isFalling = false;
+        
 
         distance = target.Data.monsterValue.bounceDistance;
         duration = knockBackDuration * distance;
@@ -354,10 +355,11 @@ public class PlayerController : MonoBehaviour, IEffectTarget
         Vector3 wallFront = Vector3.zero;
         direction = SnapToGridZero(direction);
 
-        target.RotateInstantly(direction);
 
         if (statusEffectManager.CheckStatus(EStatusEffect.Exhaustion))
         {
+            isSpace = false;
+
             target.AttackPlayer();
             TakeDamage(target.Data.damage);
 
@@ -385,6 +387,7 @@ public class PlayerController : MonoBehaviour, IEffectTarget
         }
         else
         {
+            isSpace = true;
             Vector3 toPlayer = (transform.position - target.transform.position).normalized;
 
             if (playerAttackType == EAttakcType.Blow)
@@ -400,7 +403,6 @@ public class PlayerController : MonoBehaviour, IEffectTarget
                 });
 
                 StartCoroutine(RemoveEffect("PlayerBlow", 0.5f));
-
 
                 target.RemoveShield(toPlayer);
                 target.TakeDamage(atk, playerAttackType);
@@ -421,7 +423,6 @@ public class PlayerController : MonoBehaviour, IEffectTarget
             }
             else if(playerAttackType == EAttakcType.Slash)
             {
-
                 EventBus.Publish(new EffectRequest
                 {
                     effectCode = "PlayerSlash",
@@ -439,8 +440,7 @@ public class PlayerController : MonoBehaviour, IEffectTarget
                     IsKnockedBack = false;
                     target.TakeDamage(9999, playerAttackType);
 
-                    ResetInput();
-                    fsmMachine.ChangeState(new IdleState(this));
+                    fsmMachine.ChangeState(new MoveState(this));
                     return;
                 }
                 else
@@ -477,9 +477,12 @@ public class PlayerController : MonoBehaviour, IEffectTarget
             }
         }
 
-        StartCoroutine(DoParabolaKnockback(direction, distance, height, duration , start, end));
+
+        target.RotateInstantly(direction);
+
+        StartCoroutine(DoParabolaKnockback(direction, distance, height, duration , start, end, isSpace));
     }
-    private IEnumerator DoParabolaKnockback(Vector3 dir, float dist, float height, float duration, Vector3 start, Vector3 end)
+    private IEnumerator DoParabolaKnockback(Vector3 dir, float dist, float height, float duration, Vector3 start, Vector3 end, bool isSpace)
     {
         ResetInput();
 
@@ -493,12 +496,14 @@ public class PlayerController : MonoBehaviour, IEffectTarget
             pos.y += yOffset;
             transform.position = pos;
 
-            if (t >= landingTime && !isFalling)
+            if (isSpace)
             {
-                isFalling = true;
-                EventBus.Publish(new SpaceToggleEvent());
+                if (t >= landingTime && !isFalling)
+                {
+                    isFalling = true;
+                    EventBus.Publish(new SpaceToggleEvent());
+                }
             }
-
             RotateTowardsDirection(-dir);
 
             elapsed += Time.deltaTime;
