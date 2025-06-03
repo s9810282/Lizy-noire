@@ -9,6 +9,7 @@ public struct SpaceToggleEvent
 
 public struct BoostUIEvent
 {
+    public bool isUse;
     public int boostCount;
 
     public float maxtimer;
@@ -57,7 +58,12 @@ public class UIManager : MonoBehaviour
 
     public void UpdateBoostGage(BoostUIEvent e)
     {
-        for(int i = 0; i < e.boostCount; i++)
+        for (int i = 0; i < boostGages.Length; i++)
+        {
+            boostGages[i].fillAmount = 0f;
+        }
+
+        for (int i = 0; i < e.boostCount; i++)
         {
             boostGages[i].fillAmount = 1f;
         }

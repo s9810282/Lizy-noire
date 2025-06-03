@@ -15,7 +15,6 @@ public class MoveState : IState
 
     public void Enter()
     {
-
         if (CheckWall()) return;
         if (CheckBounce()) return;
 
@@ -33,6 +32,8 @@ public class MoveState : IState
 
     public void Update()
     {
+        player.RecoveryBoost();
+
         player.RotateTowardsDirection(targetforward);
         player.transform.position = Vector3.MoveTowards(
             player.transform.position,
@@ -48,7 +49,8 @@ public class MoveState : IState
 
             if (player.InputDirection != Vector3.zero)
             {
-                player.FSMMachine.ChangeState(new MoveState(player));
+                Enter();
+                //player.FSMMachine.ChangeState(new MoveState(player));
             }
             else
             {

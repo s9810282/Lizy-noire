@@ -124,16 +124,4 @@ public class EventManager  : MonoBehaviour
         RemoveEffectRequested(e.req.effectCode);
         Destroy(e.target);
     }
-
-
-    public struct DeathEvent
-    {
-        public GameObject target;
-        public float duration;
-
-        public EffectRequest req;
-    }
-
-
-
 }

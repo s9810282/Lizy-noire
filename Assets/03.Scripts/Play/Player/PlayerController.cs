@@ -122,7 +122,6 @@ public class PlayerController : MonoBehaviour, IEffectTarget
         fsmMachine.Update();
         statusEffectManager.Update();
 
-
         if(Input.GetMouseButtonDown(0))
         {
             if (playerAttackType == EAttakcType.Blow)
@@ -132,12 +131,19 @@ public class PlayerController : MonoBehaviour, IEffectTarget
 
             EventBus.Publish(playerAttackType);
         }
+    }
 
 
+    public void RecoveryBoost()
+    {
         boostRemindTimer += Time.deltaTime;
 
         if (boostCount < maxboostCount)
         {
+            if (boostRemindTimer < boostRemindTime) return;
+
+            boostTimer += Time.deltaTime;
+
             EventBus.Publish(new BoostUIEvent
             {
                 boostCount = this.boostCount,
@@ -145,11 +151,7 @@ public class PlayerController : MonoBehaviour, IEffectTarget
                 maxtimer = boostRecoveryTime,
             });
 
-            if (boostRemindTimer < boostRemindTime) return;
-            
-            boostTimer += Time.deltaTime;
-
-            if(boostTimer > boostRecoveryTime) UpdateBoostCount(1);            
+            if (boostTimer > boostRecoveryTime) UpdateBoostCount(1);
         }
     }
 
@@ -333,6 +335,7 @@ public class PlayerController : MonoBehaviour, IEffectTarget
     {
         ResetBoostTimer();
 
+
         RotateInstantly(-direction);
         
         IsKnockedBack = true;
@@ -432,6 +435,7 @@ public class PlayerController : MonoBehaviour, IEffectTarget
 
                 if (!target.CheckShield(toPlayer))
                 {
+                    EventBus.Publish(new SlashHitEvent { revoverValue = 1.5f });
                     IsKnockedBack = false;
                     target.TakeDamage(9999, playerAttackType);
 
@@ -545,13 +549,22 @@ public class PlayerController : MonoBehaviour, IEffectTarget
     { 
         getDamageValue = value;
     }
-    public void UpdateBoostCount(int value)
+    public int UpdateBoostCount(int value)
     {
         boostTimer = 0;
         boostCount += value;
 
+        EventBus.Publish(new BoostUIEvent
+        {
+            boostCount = this.boostCount,
+            timer = boostTimer,
+            maxtimer = boostRecoveryTime,
+        });
+
         if (boostCount < 0) boostCount = 0;
         if (boostCount > maxboostCount) boostCount = maxboostCount;
+
+        return boostCount;
     }
     public void ResetBoostTimer()
     {

@@ -28,6 +28,7 @@ public class IdleState : IState
         //        return;
         //    }            
         //}
+        player.RecoveryBoost();
 
         if (player.InputDirection != Vector3.zero)
         {

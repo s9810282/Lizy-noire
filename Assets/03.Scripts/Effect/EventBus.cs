@@ -1,5 +1,20 @@
 using System;
 using System.Collections.Generic;
+using UnityEngine;
+
+
+public struct SlashHitEvent
+{
+    public float revoverValue;
+}
+
+public struct DeathEvent
+{
+    public GameObject target;
+    public float duration;
+
+    public EffectRequest req;
+}
 
 public static class EventBus
 {

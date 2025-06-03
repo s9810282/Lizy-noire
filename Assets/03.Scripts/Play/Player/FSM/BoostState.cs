@@ -5,6 +5,7 @@ public class BoostState : TimedState
 {
     Vector3 boostDir;
     bool isExhaustion = false;
+    int curCount = 0;
 
     private Vector3 targetforward = Vector3.zero;
 
@@ -22,7 +23,8 @@ public class BoostState : TimedState
     {
         base.Enter();
 
-        player.UpdateBoostCount(-1);
+        EventBus.Subscribe<SlashHitEvent>(RecoverBoostTime);
+        curCount = player.UpdateBoostCount(-1);
 
         if (CheckWall()) return;
         if (CheckBounce()) return;
@@ -39,6 +41,14 @@ public class BoostState : TimedState
     public override void Update()
     {
         base.Update();
+
+        EventBus.Publish(new BoostUIEvent
+        {
+            boostCount = this.curCount,
+            timer = timer,
+            maxtimer = duration,
+        });
+
 
         boostDir = player.InputDirection != Vector3.zero ? player.InputDirection : boostDir;
 
@@ -67,14 +77,16 @@ public class BoostState : TimedState
 
     public override void Exit()
     {
-
+        player.UpdateBoostCount(0);
     }
 
     public override void ExitToDefaultState()
     {
         player.FSMMachine.ChangeState(new MoveState(player, true));
+        player.ResetBoostTimer();
+        EventBus.Unsubscribe<SlashHitEvent>(RecoverBoostTime);
 
-        if(isExhaustion)
+        if (isExhaustion)
             player.AddEffect( new ExhaustionBuff("Å»Áø", 2f, player, EStatusEffect.Exhaustion, player.BaseMoveSpeed/2, 25, isEffect: false));
     }
 
@@ -105,4 +117,12 @@ public class BoostState : TimedState
 
         return false;
     }
+
+    public void RecoverBoostTime(SlashHitEvent e)
+    {
+        timer += e.revoverValue;
+
+        if(timer > duration)
+            timer = duration;
+    }    
 }
