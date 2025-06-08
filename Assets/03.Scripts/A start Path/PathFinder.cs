@@ -84,6 +84,22 @@ public class PathFinder
         }
     }
 
+    public void RemoveClostNode(int x, int z)
+    {
+        PathNode current = pathFinding.grid.GetGridObject3D(new Vector3(x, 1, z));
+        current.isWalkable = true;
+
+        pathFinding.mapClosedList.Remove(current);
+    }
+    public void RemoveClostNode(Vector3 t)
+    {
+        PathNode current = pathFinding.grid.GetGridObject3D(t);
+        current.isWalkable = true;
+
+        pathFinding.mapClosedList.Remove(current);
+    }
+
+
 
     public List<PathNode> GetPathNodes(Vector3 startPos, Vector3 endPos)
     {

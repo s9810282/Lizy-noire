@@ -10,6 +10,7 @@ TagManager:
   - StartPos
   - Item
   - Boundced
+  - BreakableWall
   layers:
   - Default
   - TransparentFX

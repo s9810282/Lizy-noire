@@ -7,11 +7,16 @@ public class KnockbackState : IState
     private Vector3 direction;
     private Monster target;
 
-    public KnockbackState(PlayerController player, Vector3 direction, Monster target)
+    float boostDuration;
+    bool isBoost;
+
+    public KnockbackState(PlayerController player, Vector3 direction, Monster target, float boostDuration = 0f, bool isBoost = false)
     {
         this.player = player;
         this.direction = direction;
         this.target = target;
+        this.boostDuration = boostDuration;
+        this.isBoost = isBoost;
     }
 
     public void Enter()
@@ -24,7 +29,7 @@ public class KnockbackState : IState
         }
 
         player.PlayerState = EPlayerState.KnockBack;
-        player.StartKnockback(direction, target);
+        player.StartKnockback(direction, target, isBoost:this.isBoost, boostDuration:this.boostDuration);
     }
 
     public void Update() 

@@ -16,6 +16,11 @@ public struct DeathEvent
     public EffectRequest req;
 }
 
+public struct UltEvent 
+{
+    public List<Vector3> range;
+}
+
 public static class EventBus
 {
     private static Dictionary<Type, List<Delegate>> listeners = new();

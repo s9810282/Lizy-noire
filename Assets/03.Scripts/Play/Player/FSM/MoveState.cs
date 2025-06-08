@@ -67,12 +67,19 @@ public class MoveState : IState
     {
         if (player.RaycaseBounce(player.InputDirection, out RaycastHit bounceHit))
         {
-            Monster target = bounceHit.collider.GetComponent<Monster>();
-
-            if (target != null)
+            if (bounceHit.collider.TryGetComponent<IValueItem>(out IValueItem item))
             {
-                player.FSMMachine.ChangeState(new KnockbackState(player, -player.InputDirection, target));
-                return true;
+                player.UpdateUltValue((int)item.GetValue());
+            }
+            else
+            {
+                Monster target = bounceHit.collider.GetComponent<Monster>();
+
+                if (target != null)
+                {
+                    player.FSMMachine.ChangeState(new KnockbackState(player, -player.InputDirection, target));
+                    return true;
+                }
             }
         }
 

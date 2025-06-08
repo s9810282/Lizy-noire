@@ -8,9 +8,17 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1527896816202618770}
     m_Modifications:
+    - target: {fileID: 7597916727523633651, guid: d8b39e1612b32b94d84dfe14087815b2, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8476828237768496633, guid: d8b39e1612b32b94d84dfe14087815b2, type: 3}
       propertyPath: m_Name
       value: SphereGem (3)
+      objectReference: {fileID: 0}
+    - target: {fileID: 8476828237768496633, guid: d8b39e1612b32b94d84dfe14087815b2, type: 3}
+      propertyPath: m_Layer
+      value: 9
       objectReference: {fileID: 0}
     - target: {fileID: 9144681029649387331, guid: d8b39e1612b32b94d84dfe14087815b2, type: 3}
       propertyPath: m_LocalScale.x
@@ -96,15 +104,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 5ae72abb4f5c0814e98a001acc1127bf, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -2.424
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 5ae72abb4f5c0814e98a001acc1127bf, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.882
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 5ae72abb4f5c0814e98a001acc1127bf, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -6.012
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 5ae72abb4f5c0814e98a001acc1127bf, type: 3}
       propertyPath: m_LocalRotation.w
@@ -140,7 +148,15 @@ PrefabInstance:
       objectReference: {fileID: 2100000, guid: 54c8451b55ffecb48864cfb6ba684d60, type: 2}
     - target: {fileID: 919132149155446097, guid: 5ae72abb4f5c0814e98a001acc1127bf, type: 3}
       propertyPath: m_Name
-      value: BGem
+      value: L.Gem
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 5ae72abb4f5c0814e98a001acc1127bf, type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 5ae72abb4f5c0814e98a001acc1127bf, type: 3}
+      propertyPath: m_TagString
+      value: Monster
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -155,6 +171,12 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 5ae72abb4f5c0814e98a001acc1127bf, type: 3}
       insertIndex: -1
       addedObject: {fileID: 8858093031680728439}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 5ae72abb4f5c0814e98a001acc1127bf, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5148525448538462138}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 5ae72abb4f5c0814e98a001acc1127bf, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7661676946322594914}
   m_SourcePrefab: {fileID: 100100000, guid: 5ae72abb4f5c0814e98a001acc1127bf, type: 3}
 --- !u!4 &1527896816202618770 stripped
 Transform:
@@ -184,14 +206,49 @@ MonoBehaviour:
   rotateZ: 0
   rotationSpeed: 85.67
   isFloating: 1
-  useEasingForFloating: 1
-  floatHeight: 1.93
+  useEasingForFloating: 0
+  floatHeight: 0.2
   floatSpeed: 0.4
-  startScale: {x: 1, y: 1, z: 1}
-  endScale: {x: 1.2, y: 1.2, z: 1.2}
+  startScale: {x: 0.1428494, y: 0.1428494, z: 0.1428494}
+  endScale: {x: 0.1714193, y: 0.1714193, z: 0.1714193}
   isScaling: 1
   useEasingForScaling: 1
   scaleLerpSpeed: 1.11
+--- !u!114 &5148525448538462138
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2197755122392845608}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f711a8504a8230b41b40c0859b8f6519, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  smallValue: 500
+  largeValue: 1000
+--- !u!65 &7661676946322594914
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2197755122392845608}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 4, y: 4, z: 4}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1001 &5470799669869198182
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -200,9 +257,17 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1527896816202618770}
     m_Modifications:
+    - target: {fileID: 7597916727523633651, guid: d8b39e1612b32b94d84dfe14087815b2, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8476828237768496633, guid: d8b39e1612b32b94d84dfe14087815b2, type: 3}
       propertyPath: m_Name
       value: SphereGem (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 8476828237768496633, guid: d8b39e1612b32b94d84dfe14087815b2, type: 3}
+      propertyPath: m_Layer
+      value: 9
       objectReference: {fileID: 0}
     - target: {fileID: 9144681029649387331, guid: d8b39e1612b32b94d84dfe14087815b2, type: 3}
       propertyPath: m_LocalScale.x

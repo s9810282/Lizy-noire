@@ -15,6 +15,15 @@ public struct BoostUIEvent
     public float maxtimer;
     public float timer;
 }
+public struct UltUIEvent
+{
+    public int ultCount;
+
+    public float ultGage;
+    public float ultMaxGage;
+}
+
+
 
 
 
@@ -34,10 +43,17 @@ public class UIManager : MonoBehaviour
     [Header("Boost")]
     [SerializeField] Image[] boostGages;
 
-    
+    [Header("Ult")]
+    [SerializeField] Image[] ultCount;
+    [SerializeField] Image ultGage;
+    [SerializeField] Color ultOnColor;
+    [SerializeField] Color ultOffColor;
+
+
     void OnEnable()
     {
         EventBus.Subscribe<SpaceToggleEvent>(SpaceToggle);
+        EventBus.Subscribe<UltUIEvent>(UpdateUltGage);
         EventBus.Subscribe<BoostUIEvent>(UpdateBoostGage);
         EventBus.Subscribe<EAttakcType>(ChangeAttackType);
     }
@@ -46,6 +62,7 @@ public class UIManager : MonoBehaviour
     void OnDisable()
     {
         EventBus.Unsubscribe<SpaceToggleEvent>(SpaceToggle);
+        EventBus.Unsubscribe<UltUIEvent>(UpdateUltGage);
         EventBus.Unsubscribe<BoostUIEvent>(UpdateBoostGage);
         EventBus.Unsubscribe<EAttakcType>(ChangeAttackType);
     }
@@ -70,6 +87,21 @@ public class UIManager : MonoBehaviour
 
         if(e.boostCount < boostGages.Length)
             boostGages[e.boostCount].fillAmount = e.timer / e.maxtimer;
+    }
+
+    public void UpdateUltGage(UltUIEvent e)
+    {
+        for (int i = 0; i < ultCount.Length; i++)
+        {
+            ultCount[i].color = ultOffColor;
+        }
+
+        for (int i = 0; i < e.ultCount; i++)
+        {
+            ultCount[i].color = ultOnColor;
+        }
+
+        ultGage.fillAmount = e.ultGage / e.ultMaxGage;
     }
 
     public void ChangeAttackType(EAttakcType e)

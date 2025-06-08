@@ -8,7 +8,9 @@ public class PlayerController : MonoBehaviour, IEffectTarget
     [Header("System")]
     [SerializeField] StateMachine fsmMachine;
     [SerializeField] StatusEffectManager statusEffectManager;
+    [SerializeField] UltimateExecutor ultimateExecutor;
     [SerializeField] Animator anim;
+    [SerializeField] GameObject playerMesh;
 
     [Header("Player")]
     [SerializeField] Player player;
@@ -23,11 +25,19 @@ public class PlayerController : MonoBehaviour, IEffectTarget
     [SerializeField] private float moveSpeedModifier = 0f;
     [SerializeField] private float currentMoveSpeed = 5f;
     [SerializeField] private float rotateSpeed = 1080f;
+    [Header("Boost")]
     [SerializeField] private int maxboostCount = 3;
     [SerializeField] private int boostCount = 3;
     [SerializeField] private float boostRecoveryTime = 2;
     [SerializeField] private float boostRemindTime = 2;
-    [SerializeField] private int getDamageValue = 0;
+    [Header("Ult")]
+    [SerializeField] private int ultCount = 0;
+    [SerializeField] private int ultMaxCount = 3;
+    [SerializeField] private int ultValue = 0;
+    [SerializeField] private int ultMaxValue = 1000;
+    [SerializeField] private float firstUltTimer = 0f;
+    [SerializeField] private float secondUltTimer = 0.75f;
+    [SerializeField] private float thirdUltTimer = 1.5f;
 
     [Space(15f)]
 
@@ -36,6 +46,7 @@ public class PlayerController : MonoBehaviour, IEffectTarget
     [Tooltip("착지 성공 최소값")][SerializeField] private float landingMin = 1.2f;
     [Tooltip("착지 성공 최대값")][SerializeField] private float landingMax = 1.8f;
     [Tooltip("원한다면 직접 그리기")][SerializeField] AnimationCurve curve;
+    [SerializeField] private int getDamageValue = 0;
     [Space(15f)]
     [SerializeField] private float knockBackDuration = 0.25f;
     [SerializeField] private float knockBackHeight = 1f;
@@ -58,6 +69,8 @@ public class PlayerController : MonoBehaviour, IEffectTarget
 
     float boostTimer;
     float boostRemindTimer;
+
+    float ultChargeTimer;
 
     #region Property
 
@@ -103,6 +116,7 @@ public class PlayerController : MonoBehaviour, IEffectTarget
         transform.position = targetPosition;
 
         UpdateSpeed();
+        UpdateUltValue(0);
 
         hp = maxHp;
 
@@ -122,7 +136,7 @@ public class PlayerController : MonoBehaviour, IEffectTarget
         fsmMachine.Update();
         statusEffectManager.Update();
 
-        if(Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(0))
         {
             if (playerAttackType == EAttakcType.Blow)
                 playerAttackType = EAttakcType.Slash;
@@ -131,6 +145,8 @@ public class PlayerController : MonoBehaviour, IEffectTarget
 
             EventBus.Publish(playerAttackType);
         }
+
+        ChargeUlt();
     }
 
 
@@ -154,7 +170,30 @@ public class PlayerController : MonoBehaviour, IEffectTarget
             if (boostTimer > boostRecoveryTime) UpdateBoostCount(1);
         }
     }
+    public void ChargeUlt()
+    {
+        if (IsKnockedBack) return;
 
+        if (Input.GetMouseButtonDown(1))
+        {
+            ultChargeTimer = 0;
+        }
+        else if (Input.GetMouseButton(1))
+        {
+            ultChargeTimer += Time.deltaTime;
+        }
+        else if (Input.GetMouseButtonUp(1))
+        {
+            int ult = ultChargeTimer > thirdUltTimer ? 3 : ultChargeTimer > secondUltTimer ? 2 : 1;
+
+            if (ult > ultCount) ult = ultCount;
+
+            UpdateUltCount(-ult);
+
+            ultimateExecutor.ExcuteUlt(playerAttackType, ult, transform.position, transform.forward);
+            ultChargeTimer = 0;
+        }
+    }
 
     #region Input
     public void OnMove(InputAction.CallbackContext context)
@@ -198,12 +237,10 @@ public class PlayerController : MonoBehaviour, IEffectTarget
         }
         else if (yPos > landingMin && boostCount > 0) //부스트
         {
-            //부스트 활성화 시 끝나는 것도 체크해야함
-            //부스트 남은 횟수, 그에 따른 시간 등 체크
             Debug.Log("Good");
 
             KnockbackBeforeStatus = new SpeedBuff("부스트 속도 업", 3f, this, EStatusEffect.SpeedUp, baseMoveSpeed/2f);
-            KnockbackBeforeState = new BoostState(this, 3f, isExhaustion:boostCount == 0);
+            KnockbackBeforeState = new BoostState(this, 3f);
         }
         else //경직
         {
@@ -331,9 +368,10 @@ public class PlayerController : MonoBehaviour, IEffectTarget
     StatusEffect KnockbackBeforeStatus;
     IState KnockbackBeforeState;
 
-    public void StartKnockback(Vector3 direction, Monster target, float distance = 2f, float height = 1f, float duration = 0.4f)
+    public void StartKnockback(Vector3 direction, Monster target, bool isBoost = false, float boostDuration = 0f, float distance = 2f, float height = 1f, float duration = 0.4f)
     {
-        ResetBoostTimer();
+        ultChargeTimer = 0;
+
         RotateInstantly(-direction);
 
         bool isSpace = true;
@@ -436,17 +474,25 @@ public class PlayerController : MonoBehaviour, IEffectTarget
 
                 if (!target.CheckShield(toPlayer))
                 {
-                    EventBus.Publish(new SlashHitEvent { revoverValue = 1.5f });
                     IsKnockedBack = false;
                     target.TakeDamage(9999, playerAttackType);
+                    
+                    transform.position = targetPosition;
+                    if (!isBoost)
+                        fsmMachine.ChangeState(new MoveState(this));
+                    else
+                    {
+                        UpdateBoostCount(1);
+                        fsmMachine.ChangeState(new BoostState(this, 3f, boostDuration));
+                        EventBus.Publish(new SlashHitEvent { revoverValue = 1.5f });
+                    }
 
-                    fsmMachine.ChangeState(new MoveState(this));
                     return;
                 }
                 else
                 {
-                    target.HitedPlayer();
-
+                    target.TakeDamage(0, playerAttackType);
+                   
                     isTryLanding = true;
 
                     height = 0.25f;
@@ -479,6 +525,7 @@ public class PlayerController : MonoBehaviour, IEffectTarget
 
 
         target.RotateInstantly(direction);
+        ResetBoostTimer();
 
         StartCoroutine(DoParabolaKnockback(direction, distance, height, duration , start, end, isSpace));
     }
@@ -577,6 +624,48 @@ public class PlayerController : MonoBehaviour, IEffectTarget
         boostTimer = 0;
     }
     
+    public int UpdateUltValue(int value)
+    {
+        if (ultCount == ultMaxCount) return ultValue;
+
+        //ultChargeTimer = 0;
+        ultValue += value;
+
+        if(ultValue >= ultMaxValue)
+        {
+            ultValue -= ultMaxValue;
+            UpdateUltCount(1);
+
+            if (ultCount == ultMaxCount)
+                ultValue = 0;
+        }
+     
+        EventBus.Publish(new UltUIEvent
+        {
+            ultCount = this.ultCount,
+            ultGage = ultValue,
+            ultMaxGage = ultMaxValue, 
+        });
+
+        return ultValue;
+    }
+    public int UpdateUltCount(int value)
+    {
+        ultChargeTimer = 0;
+        ultCount += value;
+
+        if (ultCount < 0) ultCount = 0;
+        if (ultCount > ultMaxCount) ultCount = maxboostCount;
+
+        EventBus.Publish(new UltUIEvent
+        {
+            ultCount = this.ultCount,
+            ultGage = ultValue,
+            ultMaxGage = ultMaxValue,
+        });
+
+        return ultCount;
+    }
 
     #endregion
 
@@ -593,6 +682,10 @@ public class PlayerController : MonoBehaviour, IEffectTarget
             Debug.Log("Die");
             fsmMachine.ChangeState(new DeadState(this));
         }
+    }
+    public void SetMeshActive(bool isActive)
+    {
+        playerMesh.gameObject.SetActive(isActive);
     }
 
     #endregion

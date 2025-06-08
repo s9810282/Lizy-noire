@@ -21,21 +21,51 @@ public enum EffectType
     SpeedDown,
 }
 
-
-public class EventManager  : MonoBehaviour
+public enum Itemtype
 {
-  
+    UltSmallItem,
+    UltMediumItem,
+    UltLargeItem
+}
+
+[System.Serializable]
+public class ItemEntry
+{
+    public Itemtype type;
+    public GameObject item;
+}
+
+[System.Serializable]
+public class ItemRequest : ScriptableObject
+{
+    public Itemtype type;
+    public Transform parent;
+
+    public Vector3 offset;
+
+}
+
+
+
+public class EventManager : MonoBehaviour
+{
+
     public List<EffectEntry> effectList;
 
     private Dictionary<EffectType, EffectData> effectDict;
     private Dictionary<string, EffectObj> currentEffects = new Dictionary<string, EffectObj>();
 
+    public List<ItemEntry> itemList;
+    private Dictionary<Itemtype, GameObject> itemDict;
+
     private void OnEnable()
     {
         effectDict = effectList.ToDictionary(e => e.type, e => e.data);
+        itemDict = itemList.ToDictionary(e => e.type, e => e.item);
 
         EventBus.Subscribe<EffectRequest>(OnEffectRequested);
         EventBus.Subscribe<DeathEvent>(OnDeath);
+        EventBus.Subscribe<UltEvent>(OnUlt);
         EventBus.Subscribe<string>(RemoveEffectRequested);
     }
 
@@ -43,6 +73,7 @@ public class EventManager  : MonoBehaviour
     {
         EventBus.Unsubscribe<EffectRequest>(OnEffectRequested);
         EventBus.Unsubscribe<DeathEvent>(OnDeath);
+        EventBus.Unsubscribe<UltEvent>(OnUlt);
         EventBus.Unsubscribe<string>(RemoveEffectRequested);
     }
 
@@ -77,7 +108,7 @@ public class EventManager  : MonoBehaviour
             Debug.LogWarning($"EffectType '{req.type}' not registered.");
             return;
         }
-        else if(currentEffects.ContainsKey(req.effectCode))
+        else if (currentEffects.ContainsKey(req.effectCode))
         {
             RemoveEffectRequested(req.effectCode);
         }
@@ -99,29 +130,66 @@ public class EventManager  : MonoBehaviour
 
     #endregion
 
+    #region Item
 
-    private void OnDeath(DeathEvent e)
+    private void OnItemRequested(ItemRequest req)
     {
-        if (currentEffects.ContainsKey("MonsterRedSpark" + e.target.name))
+        if (!itemDict.TryGetValue(req.type, out var data))
         {
-            Debug.Log($"Á×Àº ´ë»ó: {e.target.name}");
-            RemoveEffectRequested("MonsterRedSpark");
+            Debug.LogWarning($"EffectType '{req.type}' not registered.");
+            return;
         }
+        
+        GameObject fx = Instantiate(itemDict[req.type]);
+        fx.transform.localPosition = itemDict[req.type].transform.localPosition + req.offset;
+    }
 
-        if(currentEffects.ContainsKey("MonsterBlueSpark" + e.target.name))
+    #endregion
+
+    private void OnUlt(UltEvent e)
+    {
+        foreach (Vector3 line in e.range)
         {
-            RemoveEffectRequested("MonsterBlueSpark");
-        }
+            OnEffectRequested(new EffectRequest
+            {
+                effectCode = "PlayerUlt" + line,
+                type = EffectType.Ult,
+                offset = line,
+                parent = transform,
+                duration = 1f,
+            });
 
-        OnEffectRequested(e.req);
-        StartCoroutine(WaitEventDestroy(e));
+            StartCoroutine(WaitEventDestroy("PlayerUlt" + line, 1f));
+        }
     }
 
 
+    IEnumerator WaitEventDestroy(string code, float duration)
+    {
+        yield return new WaitForSeconds(duration);
+        RemoveEffectRequested(code);
+    }
+
+
+    #region Death
+
+    private void OnDeath(DeathEvent e)
+    {
+        OnEffectRequested(e.req);
+        OnItemRequested(new ItemRequest
+        {
+            type = Itemtype.UltSmallItem,
+            parent = null,
+            offset = e.target.transform.position,
+        });
+        StartCoroutine(WaitEventDestroy(e));
+    }
     IEnumerator WaitEventDestroy(DeathEvent e)
     {
         yield return new WaitForSeconds(e.duration);
         RemoveEffectRequested(e.req.effectCode);
         Destroy(e.target);
     }
+
+    #endregion
 }

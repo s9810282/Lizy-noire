@@ -10,13 +10,11 @@ public class BoostState : TimedState
     private Vector3 targetforward = Vector3.zero;
 
 
-    public BoostState(PlayerController player, float duration, float damageValue = 0, bool isExhaustion = false)
-       : base(player, duration, damageValue)
+    public BoostState(PlayerController player, float duration, float curDuration = 0f)
+       : base(player, duration, curDuration)
     {
         boostDir = 
             player.InputDirection != Vector3.zero ? player.InputDirection : player.transform.forward;
-
-        this.isExhaustion = isExhaustion;
     }
 
     public override void Enter()
@@ -25,6 +23,8 @@ public class BoostState : TimedState
 
         EventBus.Subscribe<SlashHitEvent>(RecoverBoostTime);
         curCount = player.UpdateBoostCount(-1);
+
+        isExhaustion = curCount == 0;
 
         if (CheckWall()) return;
         if (CheckBounce()) return;
@@ -45,9 +45,11 @@ public class BoostState : TimedState
         EventBus.Publish(new BoostUIEvent
         {
             boostCount = this.curCount,
-            timer = timer,
+            timer = this.timer,
             maxtimer = duration,
         });
+
+        Debug.Log("Timer : " + this.timer + " maxTimer : " + duration);
 
 
         boostDir = player.InputDirection != Vector3.zero ? player.InputDirection : boostDir;
@@ -64,27 +66,32 @@ public class BoostState : TimedState
 
         if (Vector3.Distance(player.transform.position, player.TargetPosition) < 0.01f)
         {
-            player.RotateInstantly(targetforward);
-            player.transform.position = player.TargetPosition;
-
-            if (CheckWall()) return;
-                 
-            Vector3 nextPos = player.transform.position + boostDir;
-            player.SetTargetPosition(nextPos);
-            targetforward = player.GetPlayerToTargetFoward();
+            SetNextTargetPosition();
         }
+    }
+
+    public void SetNextTargetPosition()
+    {
+        player.RotateInstantly(targetforward);
+        player.transform.position = player.TargetPosition;
+
+        if (CheckWall()) return;
+
+        Vector3 nextPos = player.transform.position + boostDir;
+        player.SetTargetPosition(nextPos);
+        targetforward = player.GetPlayerToTargetFoward();
     }
 
     public override void Exit()
     {
         player.UpdateBoostCount(0);
+        player.ResetBoostTimer();
+        EventBus.Unsubscribe<SlashHitEvent>(RecoverBoostTime);
     }
 
     public override void ExitToDefaultState()
     {
         player.FSMMachine.ChangeState(new MoveState(player, true));
-        player.ResetBoostTimer();
-        EventBus.Unsubscribe<SlashHitEvent>(RecoverBoostTime);
 
         if (isExhaustion)
             player.AddEffect( new ExhaustionBuff("Å»Áø", 2f, player, EStatusEffect.Exhaustion, player.BaseMoveSpeed/2, 25, isEffect: false));
@@ -95,12 +102,19 @@ public class BoostState : TimedState
     {
         if (player.RaycaseBounce(boostDir, out RaycastHit bounceHit))
         {
-            Monster target = bounceHit.collider.GetComponent<Monster>();
-
-            if (target != null)
+            if (bounceHit.collider.TryGetComponent(out IValueItem item))
             {
-                player.FSMMachine.ChangeState(new KnockbackState(player, -boostDir, target));
-                return true;
+                player.UpdateUltValue((int)item.GetValue());
+            }
+            else
+            {
+                Monster target = bounceHit.collider.GetComponent<Monster>();
+
+                if (target != null)
+                {
+                    player.FSMMachine.ChangeState(new KnockbackState(player, -boostDir, target, timer, true));
+                    return true;
+                }
             }
         }
 
@@ -120,6 +134,7 @@ public class BoostState : TimedState
 
     public void RecoverBoostTime(SlashHitEvent e)
     {
+        Debug.Log("RecoveryBoost : " + timer);
         timer += e.revoverValue;
 
         if(timer > duration)
