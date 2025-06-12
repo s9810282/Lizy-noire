@@ -14,9 +14,10 @@ GameObject:
   - component: {fileID: 911710363966353584}
   - component: {fileID: -5638549573552891642}
   - component: {fileID: 6110038492538581637}
+  - component: {fileID: -6339600815831155294}
   m_Layer: 8
   m_Name: BreakWall_1
-  m_TagString: Wall
+  m_TagString: BreakableWall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 4
@@ -142,3 +143,16 @@ MonoBehaviour:
   m_IgnoreFromBuild: 0
   m_ApplyToChildren: 1
   m_AffectedAgents: ffffffff
+--- !u!114 &-6339600815831155294
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3246393615907330136}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e7bd75bad76e20740a29a13c8e412183, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  type: 11

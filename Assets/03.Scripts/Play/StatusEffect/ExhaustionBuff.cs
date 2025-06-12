@@ -23,7 +23,7 @@ public class ExhaustionBuff : StatusEffect
 
     public override void ApplyEffect()
     {
-        Target.SetDamaAble(true);
+        Target.SetDamageValue(damageValue);
         Target.ModifyMoveSpeed(-speedValue);
         
         EffectType e;
@@ -57,7 +57,7 @@ public class ExhaustionBuff : StatusEffect
 
     public override void RemoveEffect()
     {
-        Target.SetDamaAble(false);
+        Target.SetDamageValue(0);
         Target.ModifyMoveSpeed(speedValue);
 
         EventBus.Publish(code);

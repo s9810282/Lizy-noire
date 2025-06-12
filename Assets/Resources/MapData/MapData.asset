@@ -166,25 +166,25 @@ MonoBehaviour:
   - TileType: 0
     x: -10
     z: -6
-  - TileType: 0
+  - TileType: 25
     x: -9
     z: -6
-  - TileType: 0
+  - TileType: 26
     x: -8
     z: -6
-  - TileType: 0
+  - TileType: 27
     x: -7
     z: -6
   - TileType: 0
     x: -6
     z: -6
-  - TileType: 0
+  - TileType: 28
     x: -5
     z: -6
-  - TileType: 0
+  - TileType: 29
     x: -4
     z: -6
-  - TileType: 0
+  - TileType: 30
     x: -3
     z: -6
   - TileType: 0
@@ -1219,13 +1219,13 @@ MonoBehaviour:
   - TileType: 0
     x: -11
     z: 10
-  - TileType: 0
+  - TileType: 19
     x: -10
     z: 10
-  - TileType: 0
+  - TileType: 20
     x: -9
     z: 10
-  - TileType: 0
+  - TileType: 21
     x: -8
     z: 10
   - TileType: 0
@@ -1237,13 +1237,13 @@ MonoBehaviour:
   - TileType: 0
     x: -5
     z: 10
-  - TileType: 0
+  - TileType: 22
     x: -4
     z: 10
-  - TileType: 0
+  - TileType: 23
     x: -3
     z: 10
-  - TileType: 0
+  - TileType: 24
     x: -2
     z: 10
   - TileType: 0

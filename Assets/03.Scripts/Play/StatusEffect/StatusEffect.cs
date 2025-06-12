@@ -6,7 +6,7 @@ public interface IEffectTarget
 {
     void ModifyMoveSpeed(float factor);
     void TakeTickDamage(float value);
-    void SetDamaAble(bool value);
+    void SetDamageValue(float value);
     Transform GetTarget();
 }
 

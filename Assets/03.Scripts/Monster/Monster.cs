@@ -47,6 +47,7 @@ public class Monster : MonoBehaviour, IDamageAble
     public MonsterData Data { get => data; set => data = value; }
     public PathNode TargetNode { get => targetNode; set => targetNode = value; }
     public List<PathNode> PathNodes { get => pathNodes; set => pathNodes = value; }
+    public HpBar HpBar { get => hpBar; set => hpBar = value; }
 
     public void TakeDamage(float damage, EAttakcType e)
     {

@@ -71,9 +71,9 @@ public class UltimateExecutor : MonoBehaviour
                         monster.TakeDamage(9999, EAttakcType.Ult);
                     else if (hit.CompareTag("BreakableWall"))
                     {
+                        hit.GetComponent<BreakableWall>().Break();
                         hit.gameObject.SetActive(false);
                         PathFinder.Instance.RemoveClostNode(hit.gameObject.transform.position);
-                        //hit.GetComponent<BreakableWall>().Break();
                     }
                 }
 

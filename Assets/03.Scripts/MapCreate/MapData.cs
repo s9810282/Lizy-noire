@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.Experimental.GlobalIllumination;
 
 
-[Serializable]
+[System.Serializable]
 public enum ETileType
 {
     None = 0,
@@ -34,6 +34,22 @@ public enum ETileType
     Moneter_1,
     Moneter_2,
     Monster_3,
+
+    BlueCrystal_1,
+    BlueCrystal_2,
+    BlueCrystal_3,
+
+    BlueDoor_1,
+    BlueDoor_2,
+    BlueDoor_3,
+
+    RedCrystal_1,
+    RedCrystal_2,
+    RedCrystal_3,
+
+    RedDoor_1,
+    RedDoor_2,
+    RedDoor_3,
 }
 
 [Serializable]

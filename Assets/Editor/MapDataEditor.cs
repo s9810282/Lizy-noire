@@ -96,10 +96,15 @@ public class MapDataEditor : Editor
             mapData.tileSpritesList.Add(new TileSpriteEntry());
         }
 
-        mapData.GetTileSprites();
+        //mapData.GetTileSprites();
 
         GUILayout.Space(30);
 
+        if (GUILayout.Button("GetTilesLoad"))
+        {
+            Debug.Log("GetTiles");
+            mapData.GetTileSprites();
+        }
 
 
 

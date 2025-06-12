@@ -19,6 +19,8 @@ public enum EffectType
     Invinsible,
     SpeedUp,
     SpeedDown,
+
+    UltAttack,
 }
 
 public enum Itemtype

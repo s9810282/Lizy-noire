@@ -91,5 +91,13 @@ public class StatusEffectManager
     public bool CheckStatus(EStatusEffect eStatus)
     {
         return effectList.ContainsKey(eStatus);
-    } 
+    }
+
+    public void UpdateEffectDuraton(EStatusEffect e, float duration)
+    {
+        if(effectList.ContainsKey(e))
+        {
+            effectList[e].Duration += duration;
+        }
+    }
 }

@@ -46,7 +46,7 @@ public class PlayerController : MonoBehaviour, IEffectTarget
     [Tooltip("착지 성공 최소값")][SerializeField] private float landingMin = 1.2f;
     [Tooltip("착지 성공 최대값")][SerializeField] private float landingMax = 1.8f;
     [Tooltip("원한다면 직접 그리기")][SerializeField] AnimationCurve curve;
-    [SerializeField] private int getDamageValue = 0;
+    [SerializeField] private float getDamageValue = 0;
     [Space(15f)]
     [SerializeField] private float knockBackDuration = 0.25f;
     [SerializeField] private float knockBackHeight = 1f;
@@ -129,6 +129,11 @@ public class PlayerController : MonoBehaviour, IEffectTarget
             timer = 0f,
             maxtimer = 0f
         });
+        EventBus.Publish(new PlayerUIEvent
+        {
+            curHp = hp,
+            maxHp = maxHp,
+        });
     }
 
     private void Update()
@@ -190,8 +195,21 @@ public class PlayerController : MonoBehaviour, IEffectTarget
 
             UpdateUltCount(-ult);
 
+            EventBus.Publish(new EffectRequest
+            {
+                effectCode = "UltAttack",
+                type = EffectType.UltAttack,
+                offset = transform.position,
+                parent = null,
+            });
+
+
+            StartCoroutine(RemoveEffect("UltAttack", 0.5f));
+
             ultimateExecutor.ExcuteUlt(playerAttackType, ult, transform.position, transform.forward);
             ultChargeTimer = 0;
+
+
         }
     }
 
@@ -399,7 +417,7 @@ public class PlayerController : MonoBehaviour, IEffectTarget
             isSpace = false;
 
             target.AttackPlayer();
-            TakeDamage(target.Data.damage);
+            TakeDamage(getDamageValue);
 
             distance = 1f;
             isTryLanding = true;
@@ -484,6 +502,7 @@ public class PlayerController : MonoBehaviour, IEffectTarget
                     {
                         UpdateBoostCount(1);
                         fsmMachine.ChangeState(new BoostState(this, 3f, boostDuration));
+                        statusEffectManager.UpdateEffectDuraton(EStatusEffect.SpeedUp, 1.5f);
                         EventBus.Publish(new SlashHitEvent { revoverValue = 1.5f });
                     }
 
@@ -597,10 +616,7 @@ public class PlayerController : MonoBehaviour, IEffectTarget
     {
         anim.SetInteger(id, type);
     }
-    public void UpdateGetDamageValue(int value)
-    { 
-        getDamageValue = value;
-    }
+ 
     public int UpdateBoostCount(int value)
     {
         boostTimer = 0;
@@ -677,6 +693,12 @@ public class PlayerController : MonoBehaviour, IEffectTarget
     {
         hp -= damage;
 
+        EventBus.Publish(new PlayerUIEvent
+        {
+            curHp = hp,
+            maxHp = maxHp,
+        });
+
         if (hp <= 0)
         {
             Debug.Log("Die");
@@ -702,10 +724,12 @@ public class PlayerController : MonoBehaviour, IEffectTarget
     {
         TakeDamage(value);
     }
-    void IEffectTarget.SetDamaAble(bool value)
+    void IEffectTarget.SetDamageValue(float value)
     {
         ResetInput();
         targetPosition = transform.position;
+
+        getDamageValue = value;
     }
     public Transform GetTarget()
     {

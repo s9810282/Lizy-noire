@@ -14,9 +14,9 @@ GameObject:
   - component: {fileID: -7395173249544825514}
   - component: {fileID: 3218575443169076718}
   - component: {fileID: 5496371908145123502}
-  m_Layer: 7
+  m_Layer: 8
   m_Name: RedDoor2
-  m_TagString: Floor
+  m_TagString: Wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 4

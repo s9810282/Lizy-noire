@@ -23,6 +23,12 @@ public struct UltUIEvent
     public float ultMaxGage;
 }
 
+public struct PlayerUIEvent
+{
+    public float maxHp;
+    public float curHp;
+}
+
 
 
 
@@ -49,12 +55,15 @@ public class UIManager : MonoBehaviour
     [SerializeField] Color ultOnColor;
     [SerializeField] Color ultOffColor;
 
+    [Header("Hp")]
+    [SerializeField] Image hpBar;
 
     void OnEnable()
     {
         EventBus.Subscribe<SpaceToggleEvent>(SpaceToggle);
         EventBus.Subscribe<UltUIEvent>(UpdateUltGage);
         EventBus.Subscribe<BoostUIEvent>(UpdateBoostGage);
+        EventBus.Subscribe<PlayerUIEvent>(UpdateHPGage);
         EventBus.Subscribe<EAttakcType>(ChangeAttackType);
     }
 
@@ -64,6 +73,7 @@ public class UIManager : MonoBehaviour
         EventBus.Unsubscribe<SpaceToggleEvent>(SpaceToggle);
         EventBus.Unsubscribe<UltUIEvent>(UpdateUltGage);
         EventBus.Unsubscribe<BoostUIEvent>(UpdateBoostGage);
+        EventBus.Unsubscribe<PlayerUIEvent>(UpdateHPGage);
         EventBus.Unsubscribe<EAttakcType>(ChangeAttackType);
     }
 
@@ -72,6 +82,10 @@ public class UIManager : MonoBehaviour
         spaceToggle.color = spaceOffColor;
     }
 
+    public void UpdateHPGage(PlayerUIEvent e)
+    {
+        hpBar.fillAmount = e.curHp / e.maxHp;
+    }
 
     public void UpdateBoostGage(BoostUIEvent e)
     {
