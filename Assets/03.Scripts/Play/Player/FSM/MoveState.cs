@@ -69,7 +69,7 @@ public class MoveState : IState
         {
             if (bounceHit.collider.TryGetComponent<IValueItem>(out IValueItem item))
             {
-                player.UpdateUltValue((int)item.GetValue());
+                player.UpdateUltValue((int)item.Execute());
             }
             else
             {

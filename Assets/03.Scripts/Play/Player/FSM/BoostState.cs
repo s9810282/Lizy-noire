@@ -104,7 +104,7 @@ public class BoostState : TimedState
         {
             if (bounceHit.collider.TryGetComponent(out IValueItem item))
             {
-                player.UpdateUltValue((int)item.GetValue());
+                player.UpdateUltValue((int)item.Execute());
             }
             else
             {

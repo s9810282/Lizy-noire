@@ -2,7 +2,13 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Experimental.GlobalIllumination;
+
+[System.Serializable]
+public enum EMapType
+{ 
+    Stage_1,
+    Stage_2,
+}
 
 
 [System.Serializable]

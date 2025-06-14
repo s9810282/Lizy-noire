@@ -1,8 +1,14 @@
 using System.Collections.Generic;
 using System.Linq;
-using UnityEditor.U2D.Aseprite;
 using UnityEngine;
-using UnityEngine.Experimental.AI;
+
+
+[System.Serializable]
+public class MapEntry
+{
+    public EMapType key;
+    public MapData data;
+}
 
 public struct CrystalBreakEvent
 {
@@ -12,7 +18,8 @@ public struct CrystalBreakEvent
 
 public class MapLoader : MonoBehaviour
 {
-    [SerializeField] MapData mapData;
+    [SerializeField] MapData curMapData;
+    [SerializeField] List<MapEntry> mapList = new();
     [SerializeField] List<TileCubeEntry> tileCubesList = new();
     [SerializeField] GameObject tileBGParent;
     [SerializeField] GameObject tileParent;
@@ -34,7 +41,22 @@ public class MapLoader : MonoBehaviour
         return tileCubes;
     }
 
+
+    private Dictionary<EMapType, MapData> mapLists;
+    public Dictionary<EMapType, MapData> GetMapLists()
+    {   
+        if (mapList == null || mapList.Count != mapList.Count)
+        {
+            mapLists = mapList.ToDictionary(entry => entry.key, entry => entry.data);
+        }
+
+        mapLists = mapList.ToDictionary(entry => entry.key, entry => entry.data);
+        return mapLists;
+    }
+
+
     Dictionary<ETileType, List<GameObject>> doorsCubes = new Dictionary<ETileType, List<GameObject>>();
+
 
     void OnEnable()
     {
@@ -50,32 +72,40 @@ public class MapLoader : MonoBehaviour
     void Start()
     {
         GetTileCubes();
+        GetMapLists();
 
         if (isTest)
             Test();
         else
-            SetMapData(mapData);
+            SetMapData(GameManager.Instance.curMapType);
     }
 
     public void Test()
     {
-        PathFinder.Instance.mapData = mapData;
+        PathFinder.Instance.mapData = curMapData;
         PathFinder.Instance.Test();
         PathFinder.Instance.SetClosedList();
     }
 
     public void SetMapData(MapData _mapData)
     {
-        mapData = _mapData;
+        curMapData = _mapData;
         PathFinder.Instance.Init(_mapData);
+
+        CreateMap();
+    }
+    public void SetMapData(EMapType mapType)
+    {
+        curMapData = mapLists[mapType];
+        PathFinder.Instance.Init(curMapData);
 
         CreateMap();
     }
 
     public void CreateMap()
     {
-        List<MapTile> bgTiles = mapData.bgTiles;
-        List<MapTile> tiles = mapData.tiles;
+        List<MapTile> bgTiles = curMapData.bgTiles;
+        List<MapTile> tiles = curMapData.tiles;
 
         List<GameObject> blueDoors1 = new List<GameObject>();
         List<GameObject> blueDoors2 = new List<GameObject>();
