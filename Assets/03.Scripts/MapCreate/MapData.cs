@@ -50,6 +50,8 @@ public enum ETileType
     RedDoor_1,
     RedDoor_2,
     RedDoor_3,
+
+    END,
 }
 
 [Serializable]

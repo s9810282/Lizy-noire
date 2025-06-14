@@ -1264,7 +1264,7 @@ MonoBehaviour:
   - TileType: 0
     x: 4
     z: 10
-  - TileType: 0
+  - TileType: 31
     x: 5
     z: 10
   - TileType: 5
