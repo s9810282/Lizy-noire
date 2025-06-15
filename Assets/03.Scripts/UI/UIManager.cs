@@ -98,6 +98,7 @@ public class UIManager : MonoBehaviour
 
     private void Start()
     {
+        StartCoroutine(FadeController.FadeOut(1f));
         spaceToggle.color = spaceOffColor;
     }
 
@@ -179,7 +180,7 @@ public class UIManager : MonoBehaviour
     public void GoTitle()
     {
         Time.timeScale = 1;
-        SceneManagerHelper.LoadSceneWithFade("Title", 1f);
+        SceneManagerHelper.LoadSceneWithFade("Main", 1f);
     }
 
     public void GoNextStage()
