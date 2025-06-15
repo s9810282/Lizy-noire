@@ -26,6 +26,8 @@ public class DeadState : IState
                 parent = null,
             }
         });
+
+        EventBus.Publish(new StageResultEvent { e = EStageResultType.Fail });
     }
 
     public void Update()

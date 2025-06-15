@@ -4,7 +4,7 @@ using UnityEngine;
 
 public interface IValueItem
 {
-    public float GetValue();
+    public float Execute();
 }
 
 
@@ -13,7 +13,7 @@ public class UltItem : MonoBehaviour, IValueItem
     [SerializeField] int smallValue;
     [SerializeField] int largeValue;
 
-    public float GetValue()
+    public float Execute()
     {
         int val = Random.Range(smallValue, largeValue);
         Debug.Log("Item :" + val);

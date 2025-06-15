@@ -642,6 +642,7 @@ public class PlayerController : MonoBehaviour, IEffectTarget
     
     public int UpdateUltValue(int value)
     {
+        if (value == -1) return 0;
         if (ultCount == ultMaxCount) return ultValue;
 
         //ultChargeTimer = 0;

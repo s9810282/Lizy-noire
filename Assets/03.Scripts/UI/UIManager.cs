@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections.Generic;
 using System.Collections;
 using UnityEngine.UI;
 
@@ -29,6 +30,18 @@ public struct PlayerUIEvent
     public float curHp;
 }
 
+public struct StageResultEvent
+{
+    public EStageResultType e;
+}
+
+
+public enum EStageResultType
+{
+    Next = 0,
+    Clear,
+    Fail,
+}
 
 
 
@@ -58,12 +71,17 @@ public class UIManager : MonoBehaviour
     [Header("Hp")]
     [SerializeField] Image hpBar;
 
+    [Header("Result UI")]
+    [SerializeField] List<GameObject> resultObjs;
+
+
     void OnEnable()
     {
         EventBus.Subscribe<SpaceToggleEvent>(SpaceToggle);
         EventBus.Subscribe<UltUIEvent>(UpdateUltGage);
         EventBus.Subscribe<BoostUIEvent>(UpdateBoostGage);
         EventBus.Subscribe<PlayerUIEvent>(UpdateHPGage);
+        EventBus.Subscribe<StageResultEvent>(OnResultUI);
         EventBus.Subscribe<EAttakcType>(ChangeAttackType);
     }
 
@@ -74,6 +92,7 @@ public class UIManager : MonoBehaviour
         EventBus.Unsubscribe<UltUIEvent>(UpdateUltGage);
         EventBus.Unsubscribe<BoostUIEvent>(UpdateBoostGage);
         EventBus.Unsubscribe<PlayerUIEvent>(UpdateHPGage);
+        EventBus.Unsubscribe<StageResultEvent>(OnResultUI);
         EventBus.Unsubscribe<EAttakcType>(ChangeAttackType);
     }
 
@@ -149,4 +168,31 @@ public class UIManager : MonoBehaviour
             yield return new WaitForSeconds(0.15f);
         }
     }
+
+
+    public void OnResultUI(StageResultEvent e)
+    {
+        Time.timeScale = 0;
+        resultObjs[(int)e.e].gameObject.SetActive(true);
+    }
+
+    public void GoTitle()
+    {
+        Time.timeScale = 1;
+        SceneManagerHelper.LoadSceneWithFade("Title", 1f);
+    }
+
+    public void GoNextStage()
+    {
+        Time.timeScale = 1;
+        GameManager.Instance.curMapType++;
+        SceneManagerHelper.ReloadCurrentSceneWithFade(1f);
+    }
+
+    public void Retry()
+    {
+        Time.timeScale = 1;
+        SceneManagerHelper.ReloadCurrentSceneWithFade(1f);
+    }
+
 }
