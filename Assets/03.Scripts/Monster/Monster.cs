@@ -249,6 +249,8 @@ public class Monster : MonoBehaviour, IDamageAble
 
     public void UpdateTarget()
     {
+        if (pathNodes == null) return;
+        
         currentMovePathCount++;
         nextTargetNode = pathNodes[currentMovePathCount];
     }

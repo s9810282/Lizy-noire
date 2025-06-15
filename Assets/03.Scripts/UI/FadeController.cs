@@ -9,27 +9,12 @@ public class FadeController : MonoBehaviour
 
     private void Awake()
     {
-        if (instance == null)
-        {
-            instance = this;
-            DontDestroyOnLoad(gameObject);
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
+        instance = this;
     }
 
     private void Start()
     {
-        fadeImage = GetComponent<Image>();
-
-        // 맨 처음에는 풀려진 상태
-        var color = fadeImage.color;
-        color.a = 0f;
-        fadeImage.color = color;
-
-        fadeImage.gameObject.SetActive(false);
+        
     }
 
     public static void FadeInOut(float fadeDuration, System.Action onFadeOutComplete)
@@ -39,7 +24,6 @@ public class FadeController : MonoBehaviour
 
     private static IEnumerator FadeProcess(float duration, System.Action onFadeOutComplete)
     {
-        instance.fadeImage.gameObject.SetActive(true);
 
         // Fade In
         yield return instance.StartCoroutine(FadeIn(duration));
@@ -50,11 +34,12 @@ public class FadeController : MonoBehaviour
         // Fade Out
         yield return instance.StartCoroutine(FadeOut(duration));
 
-        instance.fadeImage.gameObject.SetActive(false);
+
     }
 
-    private static IEnumerator FadeIn(float duration)
+    public static IEnumerator FadeIn(float duration)
     {
+        instance.fadeImage.gameObject.SetActive(true);
         var color = instance.fadeImage.color;
 
         float startAlpha = color.a;
@@ -71,8 +56,10 @@ public class FadeController : MonoBehaviour
         instance.fadeImage.color = color;
     }
 
-    private static IEnumerator FadeOut(float duration)
+    public static IEnumerator FadeOut(float duration)
     {
+        instance.fadeImage.gameObject.SetActive(true);
+
         var color = instance.fadeImage.color;
 
         float startAlpha = color.a;
@@ -87,5 +74,6 @@ public class FadeController : MonoBehaviour
         }
         color.a = 0f;
         instance.fadeImage.color = color;
+        instance.fadeImage.gameObject.SetActive(false);
     }
 }
