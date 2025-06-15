@@ -698,7 +698,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8347beccf4bd4ac4e89f1a4005bcfe0e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  data: {fileID: 11400000, guid: 7908b14b52f3169439b1c13d0f5708d2, type: 2}
+  data: {fileID: 11400000, guid: b5bbfa0f329ab554db5d905287a1d886, type: 2}
   hpBar: {fileID: 0}
   animator: {fileID: 7972339835727820050}
   bt: {fileID: 6334430219520580941}
