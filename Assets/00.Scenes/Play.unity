@@ -20148,11 +20148,11 @@ MonoBehaviour:
   anim: {fileID: 7175108369261730245}
   playerMesh: {fileID: 1947354479}
   player: {fileID: 547463112}
-  playerAttackType: 2
+  playerAttackType: 1
   playerState: 3
   maxHp: 100
   hp: 100
-  atk: 100
+  atk: 500
   baseMoveSpeed: 5
   moveSpeedModifier: 0
   currentMoveSpeed: 5

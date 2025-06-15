@@ -808,7 +808,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8347beccf4bd4ac4e89f1a4005bcfe0e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  data: {fileID: 11400000, guid: 7908b14b52f3169439b1c13d0f5708d2, type: 2}
+  data: {fileID: 11400000, guid: 995347062de88bc4c90f94ae6c6570fa, type: 2}
   hpBar: {fileID: 0}
   animator: {fileID: 6440485969670224705}
   bt: {fileID: 6771398880943134029}
@@ -817,6 +817,7 @@ MonoBehaviour:
   currentSpeed: 0
   isGroggy: 0
   isMove: 0
+  isDead: 0
   shieldDir: 
   targetNode:
     x: 0

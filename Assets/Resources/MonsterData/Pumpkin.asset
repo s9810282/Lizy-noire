@@ -15,7 +15,7 @@ MonoBehaviour:
   name: Pumpkin
   damage: 10
   groggyDuration: 2
-  maxHp: 120
+  maxHp: 700
   speed: 4
   monsterValue:
     shieldDir: 1
