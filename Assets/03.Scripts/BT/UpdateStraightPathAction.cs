@@ -28,6 +28,8 @@ public partial class UpdateStraightPathAction : Action
             targetPos = Self.Value.transform.position + (Dir.Value * ((int)Range.Value - 1));
         }
 
+        
+
         PathNode current = PathFinder.Instance.pathFinding.grid.GetGridObject3D(Self.Value.transform.position);
         PathNode targetNode = PathFinder.Instance.pathFinding.grid.GetGridObject3D(targetPos);
 

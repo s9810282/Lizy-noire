@@ -16,7 +16,11 @@ public partial class FindPatrolPosAction : Action
     {
         PathNode current = PathFinder.Instance.pathFinding.grid.GetGridObject3D(Self.Value.gameObject.transform.position);
         List<PathNode> nodes = PathFinder.Instance.GetReachableNodes(current, Range.Value, Range.Value / 2);
-        PathNode targetNode = nodes[UnityEngine.Random.Range(0, nodes.Count)];
+
+        if(nodes.Count == 0) return Status.Failure;
+
+        int targetIndex = UnityEngine.Random.Range(0, nodes.Count);
+        PathNode targetNode = nodes[targetIndex];
 
         Self.Value.TargetNode = targetNode;
         Self.Value.FindPath();

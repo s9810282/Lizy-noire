@@ -253,6 +253,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 25
+  isCrystal: 1
 --- !u!1 &4115743357326420720
 GameObject:
   m_ObjectHideFlags: 0

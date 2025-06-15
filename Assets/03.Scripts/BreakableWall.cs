@@ -3,7 +3,7 @@ using UnityEngine;
 public class BreakableWall : MonoBehaviour
 {
     [SerializeField] ETileType type;
-
+    [SerializeField] bool isCrystal = false;
     void Start()
     {
         
@@ -11,9 +11,12 @@ public class BreakableWall : MonoBehaviour
 
     public void Break()
     {
-        EventBus.Publish(new CrystalBreakEvent
+        if (isCrystal)
         {
-            e = type
-        });
+            EventBus.Publish(new CrystalBreakEvent
+            {
+                e = type
+            });
+        }
     }
 }
