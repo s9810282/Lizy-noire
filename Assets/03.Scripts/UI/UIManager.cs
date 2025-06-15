@@ -98,7 +98,6 @@ public class UIManager : MonoBehaviour
 
     private void Start()
     {
-        StartCoroutine(FadeController.FadeOut(1f));
         spaceToggle.color = spaceOffColor;
     }
 
