@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d4bb2458e6c1e4b46bf3952ad14d5705, type: 3}
-  m_Name: Stage2
+  m_Name: Stage1(real)
   m_EditorClassIdentifier: 
   stageName: 
   mapMinSize: {x: -15, y: 0, z: -8}
