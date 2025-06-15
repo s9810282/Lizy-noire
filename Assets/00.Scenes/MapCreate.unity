@@ -9068,6 +9068,37 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1393087599}
   m_CullTransparentMesh: 1
+--- !u!1 &1395070171
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1395070172}
+  m_Layer: 0
+  m_Name: GameObject
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1395070172
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1395070171}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -1.1969693, y: 0.75032103, z: -3.4705732}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1418813367
 GameObject:
   m_ObjectHideFlags: 0
@@ -10013,6 +10044,8 @@ MonoBehaviour:
     tile: {fileID: 11400000, guid: 75be91241b778724ca197598563a4c26, type: 2}
   - key: 30
     tile: {fileID: 11400000, guid: de80a484346e4014497989cf4ebd5dd7, type: 2}
+  - key: 31
+    tile: {fileID: 11400000, guid: 1b69f52afade2c340a92379e25c664ac, type: 2}
   tileCubesList:
   - key: 1
     cube: {fileID: 3458176232958299683, guid: 417af6885aee74848a0ab380ef21bf97, type: 3}
@@ -10074,6 +10107,8 @@ MonoBehaviour:
     cube: {fileID: 3246254836672153242, guid: b107bbbc67586114ebdd64271f907405, type: 3}
   - key: 30
     cube: {fileID: 3246254836672153242, guid: 43ba11a640a5f304cafc4fb5f4249693, type: 3}
+  - key: 31
+    cube: {fileID: 1762739969843382961, guid: 36d471e977760414985791ccad0b46a0, type: 3}
 --- !u!1 &1935881960
 GameObject:
   m_ObjectHideFlags: 0
@@ -10161,3 +10196,4 @@ SceneRoots:
   - {fileID: 1627741112}
   - {fileID: 44188224}
   - {fileID: 1868718677}
+  - {fileID: 1395070172}
