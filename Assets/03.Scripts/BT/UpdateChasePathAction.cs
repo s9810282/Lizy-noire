@@ -16,6 +16,8 @@ public partial class UpdateChasePathAction : Action
     {
         //Debug.Log("Update Path");
 
+        if (TargetPos.Value == null) return Status.Failure;
+
         int x = Mathf.FloorToInt(TargetPos.Value.transform.position.x);
         int y = 1;
         int z = Mathf.FloorToInt(TargetPos.Value.transform.position.z);
