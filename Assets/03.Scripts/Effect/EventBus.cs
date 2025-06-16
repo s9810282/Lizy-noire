@@ -14,6 +14,7 @@ public struct DeathEvent
     public float duration;
 
     public EffectRequest req;
+    public ItemRequest itemreq;
 }
 
 public struct UltEvent 

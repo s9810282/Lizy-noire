@@ -638,6 +638,8 @@ public class PlayerController : MonoBehaviour, IEffectTarget
     {
         boostRemindTimer = 0;
         boostTimer = 0;
+
+        UpdateBoostCount(0);
     }
     
     public int UpdateUltValue(int value)

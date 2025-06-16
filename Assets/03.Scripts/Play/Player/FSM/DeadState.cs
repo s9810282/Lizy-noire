@@ -24,7 +24,8 @@ public class DeadState : IState
                 type = EffectType.DeathSpark,
                 offset = player.gameObject.transform.position,
                 parent = null,
-            }
+            },
+            itemreq = null
         });
 
         EventBus.Publish(new StageResultEvent { e = EStageResultType.Fail });

@@ -136,6 +136,8 @@ public class EventManager : MonoBehaviour
 
     private void OnItemRequested(ItemRequest req)
     {
+        if (req == null) return;
+
         if (!itemDict.TryGetValue(req.type, out var data))
         {
             Debug.LogWarning($"EffectType '{req.type}' not registered.");
@@ -178,12 +180,7 @@ public class EventManager : MonoBehaviour
     private void OnDeath(DeathEvent e)
     {
         OnEffectRequested(e.req);
-        OnItemRequested(new ItemRequest
-        {
-            type = Itemtype.UltSmallItem,
-            parent = null,
-            offset = e.target.transform.position,
-        });
+        OnItemRequested(e.itemreq);
         StartCoroutine(WaitEventDestroy(e));
     }
     IEnumerator WaitEventDestroy(DeathEvent e)

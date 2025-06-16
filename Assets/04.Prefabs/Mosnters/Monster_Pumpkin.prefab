@@ -813,6 +813,7 @@ MonoBehaviour:
   animator: {fileID: 6440485969670224705}
   bt: {fileID: 6771398880943134029}
   col: {fileID: 7651842846249922765}
+  itemtype: 1
   currentHP: 0
   currentSpeed: 0
   isGroggy: 0

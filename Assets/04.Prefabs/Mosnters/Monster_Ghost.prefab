@@ -109,10 +109,12 @@ MonoBehaviour:
   animator: {fileID: 8212619245161662138}
   bt: {fileID: 2779374497959550697}
   col: {fileID: 3931003433052431438}
+  itemtype: 2
   currentHP: 0
   currentSpeed: 0
   isGroggy: 0
   isMove: 0
+  isDead: 0
   shieldDir: 
   targetNode:
     x: 0

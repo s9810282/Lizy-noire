@@ -26,6 +26,7 @@ public class Monster : MonoBehaviour, IDamageAble
     [SerializeField] Animator animator;
     [SerializeField] BehaviorGraphAgent bt;
     [SerializeField] BoxCollider col;
+    [SerializeField] Itemtype itemtype;
 
     [SerializeField] float currentHP;
     [SerializeField] float currentSpeed;
@@ -69,6 +70,7 @@ public class Monster : MonoBehaviour, IDamageAble
 
             EventBus.Publish(new DeathEvent
             {
+
                 target = this.gameObject,
                 duration = 2f,
                 req = new EffectRequest
@@ -77,6 +79,12 @@ public class Monster : MonoBehaviour, IDamageAble
                     type = EffectType.DeathSpark,
                     parent = transform,
                     offset = new Vector3(0f, 0.5f, 0f),
+                },
+                itemreq = new ItemRequest
+                {
+                    type = itemtype,
+                    parent = null,
+                    offset = transform.position,
                 }
             });
         }
