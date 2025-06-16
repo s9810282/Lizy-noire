@@ -346,16 +346,16 @@ MonoBehaviour:
   - TileType: 0
     x: 8
     z: -6
-  - TileType: 16
+  - TileType: 0
     x: 9
     z: -6
-  - TileType: 16
+  - TileType: 0
     x: 10
     z: -6
-  - TileType: 17
+  - TileType: 0
     x: 11
     z: -6
-  - TileType: 17
+  - TileType: 0
     x: 12
     z: -6
   - TileType: 0
@@ -457,7 +457,7 @@ MonoBehaviour:
   - TileType: 0
     x: 2
     z: -5
-  - TileType: 17
+  - TileType: 0
     x: 3
     z: -5
   - TileType: 0
@@ -475,7 +475,7 @@ MonoBehaviour:
   - TileType: 0
     x: 8
     z: -5
-  - TileType: 16
+  - TileType: 0
     x: 9
     z: -5
   - TileType: 16
@@ -604,7 +604,7 @@ MonoBehaviour:
   - TileType: 0
     x: 8
     z: -4
-  - TileType: 16
+  - TileType: 0
     x: 9
     z: -4
   - TileType: 16
@@ -697,7 +697,7 @@ MonoBehaviour:
   - TileType: 0
     x: -4
     z: -3
-  - TileType: 17
+  - TileType: 0
     x: -3
     z: -3
   - TileType: 0
@@ -733,7 +733,7 @@ MonoBehaviour:
   - TileType: 0
     x: 8
     z: -3
-  - TileType: 16
+  - TileType: 0
     x: 9
     z: -3
   - TileType: 16
@@ -850,7 +850,7 @@ MonoBehaviour:
   - TileType: 0
     x: 4
     z: -2
-  - TileType: 18
+  - TileType: 17
     x: 5
     z: -2
   - TileType: 5
@@ -862,7 +862,7 @@ MonoBehaviour:
   - TileType: 0
     x: 8
     z: -2
-  - TileType: 16
+  - TileType: 0
     x: 9
     z: -2
   - TileType: 16
@@ -991,16 +991,16 @@ MonoBehaviour:
   - TileType: 0
     x: 8
     z: -1
-  - TileType: 16
+  - TileType: 0
     x: 9
     z: -1
-  - TileType: 16
+  - TileType: 0
     x: 10
     z: -1
-  - TileType: 17
+  - TileType: 0
     x: 11
     z: -1
-  - TileType: 17
+  - TileType: 0
     x: 12
     z: -1
   - TileType: 0
@@ -1120,16 +1120,16 @@ MonoBehaviour:
   - TileType: 0
     x: 8
     z: 0
-  - TileType: 16
+  - TileType: 0
     x: 9
     z: 0
-  - TileType: 16
+  - TileType: 0
     x: 10
     z: 0
-  - TileType: 17
+  - TileType: 0
     x: 11
     z: 0
-  - TileType: 17
+  - TileType: 0
     x: 12
     z: 0
   - TileType: 0
@@ -1336,13 +1336,13 @@ MonoBehaviour:
   - TileType: 0
     x: -6
     z: 2
-  - TileType: 17
+  - TileType: 0
     x: -5
     z: 2
   - TileType: 5
     x: -4
     z: 2
-  - TileType: 0
+  - TileType: 17
     x: -3
     z: 2
   - TileType: 0
@@ -1765,10 +1765,10 @@ MonoBehaviour:
   - TileType: 0
     x: 8
     z: 5
-  - TileType: 8
+  - TileType: 0
     x: 9
     z: 5
-  - TileType: 8
+  - TileType: 0
     x: 10
     z: 5
   - TileType: 0
@@ -1870,7 +1870,7 @@ MonoBehaviour:
   - TileType: 0
     x: 0
     z: 6
-  - TileType: 17
+  - TileType: 0
     x: 1
     z: 6
   - TileType: 17
@@ -1963,325 +1963,325 @@ MonoBehaviour:
   - TileType: 8
     x: -12
     z: 7
-  - TileType: 0
-    x: -11
-    z: 7
-  - TileType: 8
-    x: -10
-    z: 7
-  - TileType: 0
-    x: -9
-    z: 7
-  - TileType: 8
-    x: -8
-    z: 7
-  - TileType: 0
-    x: -7
-    z: 7
-  - TileType: 8
-    x: -6
-    z: 7
-  - TileType: 0
-    x: -5
-    z: 7
-  - TileType: 8
-    x: -4
-    z: 7
-  - TileType: 8
-    x: -3
-    z: 7
-  - TileType: 0
-    x: -2
-    z: 7
-  - TileType: 0
-    x: -1
-    z: 7
-  - TileType: 0
-    x: 0
-    z: 7
-  - TileType: 17
-    x: 1
-    z: 7
-  - TileType: 17
-    x: 2
-    z: 7
-  - TileType: 17
-    x: 3
-    z: 7
-  - TileType: 17
-    x: 4
-    z: 7
-  - TileType: 0
-    x: 5
-    z: 7
-  - TileType: 5
-    x: 6
-    z: 7
-  - TileType: 5
-    x: 7
-    z: 7
-  - TileType: 0
-    x: 8
-    z: 7
-  - TileType: 0
-    x: 9
-    z: 7
-  - TileType: 0
-    x: 10
-    z: 7
-  - TileType: 8
-    x: 11
-    z: 7
-  - TileType: 8
-    x: 12
-    z: 7
-  - TileType: 0
-    x: 13
-    z: 7
-  - TileType: 0
-    x: 14
-    z: 7
-  - TileType: 0
-    x: 15
-    z: 7
-  - TileType: 9
-    x: 16
-    z: 7
-  - TileType: 9
-    x: 17
-    z: 7
-  - TileType: 0
-    x: 18
-    z: 7
-  - TileType: 0
-    x: 19
-    z: 7
-  - TileType: 0
-    x: 20
-    z: 7
-  - TileType: 8
-    x: 21
-    z: 7
-  - TileType: 5
-    x: 22
-    z: 7
-  - TileType: 5
-    x: 23
-    z: 7
-  - TileType: 13
-    x: 24
-    z: 7
-  - TileType: 13
-    x: 25
-    z: 7
-  - TileType: 13
-    x: 26
-    z: 7
-  - TileType: 5
-    x: 27
-    z: 7
-  - TileType: 5
-    x: -15
-    z: 8
-  - TileType: 0
-    x: -14
-    z: 8
-  - TileType: 0
-    x: -13
-    z: 8
-  - TileType: 8
-    x: -12
-    z: 8
-  - TileType: 0
-    x: -11
-    z: 8
-  - TileType: 8
-    x: -10
-    z: 8
-  - TileType: 0
-    x: -9
-    z: 8
-  - TileType: 8
-    x: -8
-    z: 8
-  - TileType: 0
-    x: -7
-    z: 8
-  - TileType: 8
-    x: -6
-    z: 8
-  - TileType: 0
-    x: -5
-    z: 8
-  - TileType: 8
-    x: -4
-    z: 8
-  - TileType: 8
-    x: -3
-    z: 8
-  - TileType: 0
-    x: -2
-    z: 8
-  - TileType: 0
-    x: -1
-    z: 8
-  - TileType: 0
-    x: 0
-    z: 8
-  - TileType: 17
-    x: 1
-    z: 8
-  - TileType: 17
-    x: 2
-    z: 8
-  - TileType: 17
-    x: 3
-    z: 8
-  - TileType: 17
-    x: 4
-    z: 8
-  - TileType: 0
-    x: 5
-    z: 8
-  - TileType: 5
-    x: 6
-    z: 8
-  - TileType: 5
-    x: 7
-    z: 8
-  - TileType: 0
-    x: 8
-    z: 8
-  - TileType: 0
-    x: 9
-    z: 8
-  - TileType: 0
-    x: 10
-    z: 8
-  - TileType: 0
-    x: 11
-    z: 8
-  - TileType: 8
-    x: 12
-    z: 8
-  - TileType: 8
-    x: 13
-    z: 8
-  - TileType: 0
-    x: 14
-    z: 8
-  - TileType: 0
-    x: 15
-    z: 8
-  - TileType: 0
-    x: 16
-    z: 8
-  - TileType: 9
-    x: 17
-    z: 8
-  - TileType: 9
-    x: 18
-    z: 8
-  - TileType: 0
-    x: 19
-    z: 8
-  - TileType: 0
-    x: 20
-    z: 8
-  - TileType: 0
-    x: 21
-    z: 8
-  - TileType: 24
-    x: 22
-    z: 8
-  - TileType: 24
-    x: 23
-    z: 8
-  - TileType: 0
-    x: 24
-    z: 8
-  - TileType: 0
-    x: 25
-    z: 8
-  - TileType: 0
-    x: 26
-    z: 8
-  - TileType: 5
-    x: 27
-    z: 8
-  - TileType: 5
-    x: -15
-    z: 9
-  - TileType: 0
-    x: -14
-    z: 9
-  - TileType: 0
-    x: -13
-    z: 9
-  - TileType: 8
-    x: -12
-    z: 9
-  - TileType: 8
-    x: -11
-    z: 9
-  - TileType: 8
-    x: -10
-    z: 9
-  - TileType: 8
-    x: -9
-    z: 9
-  - TileType: 8
-    x: -8
-    z: 9
-  - TileType: 8
-    x: -7
-    z: 9
-  - TileType: 8
-    x: -6
-    z: 9
-  - TileType: 8
-    x: -5
-    z: 9
-  - TileType: 8
-    x: -4
-    z: 9
-  - TileType: 8
-    x: -3
-    z: 9
-  - TileType: 8
-    x: -2
-    z: 9
-  - TileType: 8
-    x: -1
-    z: 9
-  - TileType: 8
-    x: 0
-    z: 9
-  - TileType: 8
-    x: 1
-    z: 9
-  - TileType: 8
-    x: 2
-    z: 9
-  - TileType: 23
-    x: 3
-    z: 9
-  - TileType: 23
-    x: 4
-    z: 9
-  - TileType: 23
-    x: 5
-    z: 9
-  - TileType: 5
-    x: 6
-    z: 9
-  - TileType: 5
-    x: 7
-    z: 9
-  - TileType: 0
-    x: 8
-    z: 9
   - TileType: 18
+    x: -11
+    z: 7
+  - TileType: 8
+    x: -10
+    z: 7
+  - TileType: 18
+    x: -9
+    z: 7
+  - TileType: 8
+    x: -8
+    z: 7
+  - TileType: 18
+    x: -7
+    z: 7
+  - TileType: 8
+    x: -6
+    z: 7
+  - TileType: 18
+    x: -5
+    z: 7
+  - TileType: 8
+    x: -4
+    z: 7
+  - TileType: 8
+    x: -3
+    z: 7
+  - TileType: 0
+    x: -2
+    z: 7
+  - TileType: 0
+    x: -1
+    z: 7
+  - TileType: 0
+    x: 0
+    z: 7
+  - TileType: 0
+    x: 1
+    z: 7
+  - TileType: 17
+    x: 2
+    z: 7
+  - TileType: 17
+    x: 3
+    z: 7
+  - TileType: 17
+    x: 4
+    z: 7
+  - TileType: 0
+    x: 5
+    z: 7
+  - TileType: 5
+    x: 6
+    z: 7
+  - TileType: 5
+    x: 7
+    z: 7
+  - TileType: 0
+    x: 8
+    z: 7
+  - TileType: 0
+    x: 9
+    z: 7
+  - TileType: 0
+    x: 10
+    z: 7
+  - TileType: 8
+    x: 11
+    z: 7
+  - TileType: 8
+    x: 12
+    z: 7
+  - TileType: 0
+    x: 13
+    z: 7
+  - TileType: 0
+    x: 14
+    z: 7
+  - TileType: 0
+    x: 15
+    z: 7
+  - TileType: 9
+    x: 16
+    z: 7
+  - TileType: 9
+    x: 17
+    z: 7
+  - TileType: 0
+    x: 18
+    z: 7
+  - TileType: 0
+    x: 19
+    z: 7
+  - TileType: 0
+    x: 20
+    z: 7
+  - TileType: 8
+    x: 21
+    z: 7
+  - TileType: 5
+    x: 22
+    z: 7
+  - TileType: 5
+    x: 23
+    z: 7
+  - TileType: 13
+    x: 24
+    z: 7
+  - TileType: 13
+    x: 25
+    z: 7
+  - TileType: 13
+    x: 26
+    z: 7
+  - TileType: 5
+    x: 27
+    z: 7
+  - TileType: 5
+    x: -15
+    z: 8
+  - TileType: 0
+    x: -14
+    z: 8
+  - TileType: 0
+    x: -13
+    z: 8
+  - TileType: 8
+    x: -12
+    z: 8
+  - TileType: 18
+    x: -11
+    z: 8
+  - TileType: 8
+    x: -10
+    z: 8
+  - TileType: 18
+    x: -9
+    z: 8
+  - TileType: 8
+    x: -8
+    z: 8
+  - TileType: 18
+    x: -7
+    z: 8
+  - TileType: 8
+    x: -6
+    z: 8
+  - TileType: 18
+    x: -5
+    z: 8
+  - TileType: 8
+    x: -4
+    z: 8
+  - TileType: 8
+    x: -3
+    z: 8
+  - TileType: 0
+    x: -2
+    z: 8
+  - TileType: 0
+    x: -1
+    z: 8
+  - TileType: 0
+    x: 0
+    z: 8
+  - TileType: 0
+    x: 1
+    z: 8
+  - TileType: 17
+    x: 2
+    z: 8
+  - TileType: 17
+    x: 3
+    z: 8
+  - TileType: 17
+    x: 4
+    z: 8
+  - TileType: 0
+    x: 5
+    z: 8
+  - TileType: 5
+    x: 6
+    z: 8
+  - TileType: 5
+    x: 7
+    z: 8
+  - TileType: 0
+    x: 8
+    z: 8
+  - TileType: 0
+    x: 9
+    z: 8
+  - TileType: 0
+    x: 10
+    z: 8
+  - TileType: 0
+    x: 11
+    z: 8
+  - TileType: 8
+    x: 12
+    z: 8
+  - TileType: 8
+    x: 13
+    z: 8
+  - TileType: 0
+    x: 14
+    z: 8
+  - TileType: 0
+    x: 15
+    z: 8
+  - TileType: 0
+    x: 16
+    z: 8
+  - TileType: 9
+    x: 17
+    z: 8
+  - TileType: 9
+    x: 18
+    z: 8
+  - TileType: 0
+    x: 19
+    z: 8
+  - TileType: 0
+    x: 20
+    z: 8
+  - TileType: 0
+    x: 21
+    z: 8
+  - TileType: 24
+    x: 22
+    z: 8
+  - TileType: 24
+    x: 23
+    z: 8
+  - TileType: 0
+    x: 24
+    z: 8
+  - TileType: 0
+    x: 25
+    z: 8
+  - TileType: 0
+    x: 26
+    z: 8
+  - TileType: 5
+    x: 27
+    z: 8
+  - TileType: 5
+    x: -15
+    z: 9
+  - TileType: 0
+    x: -14
+    z: 9
+  - TileType: 0
+    x: -13
+    z: 9
+  - TileType: 8
+    x: -12
+    z: 9
+  - TileType: 8
+    x: -11
+    z: 9
+  - TileType: 8
+    x: -10
+    z: 9
+  - TileType: 8
+    x: -9
+    z: 9
+  - TileType: 8
+    x: -8
+    z: 9
+  - TileType: 8
+    x: -7
+    z: 9
+  - TileType: 8
+    x: -6
+    z: 9
+  - TileType: 8
+    x: -5
+    z: 9
+  - TileType: 8
+    x: -4
+    z: 9
+  - TileType: 8
+    x: -3
+    z: 9
+  - TileType: 8
+    x: -2
+    z: 9
+  - TileType: 8
+    x: -1
+    z: 9
+  - TileType: 8
+    x: 0
+    z: 9
+  - TileType: 8
+    x: 1
+    z: 9
+  - TileType: 8
+    x: 2
+    z: 9
+  - TileType: 23
+    x: 3
+    z: 9
+  - TileType: 23
+    x: 4
+    z: 9
+  - TileType: 23
+    x: 5
+    z: 9
+  - TileType: 5
+    x: 6
+    z: 9
+  - TileType: 5
+    x: 7
+    z: 9
+  - TileType: 0
+    x: 8
+    z: 9
+  - TileType: 0
     x: 9
     z: 9
   - TileType: 0
@@ -2308,10 +2308,10 @@ MonoBehaviour:
   - TileType: 0
     x: 17
     z: 9
-  - TileType: 9
+  - TileType: 0
     x: 18
     z: 9
-  - TileType: 9
+  - TileType: 0
     x: 19
     z: 9
   - TileType: 0

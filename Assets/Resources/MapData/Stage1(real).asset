@@ -661,7 +661,7 @@ MonoBehaviour:
   - TileType: 0
     x: 15
     z: -4
-  - TileType: 18
+  - TileType: 0
     x: 16
     z: -4
   - TileType: 6
@@ -1360,7 +1360,7 @@ MonoBehaviour:
   - TileType: 0
     x: 18
     z: 1
-  - TileType: 17
+  - TileType: 0
     x: 19
     z: 1
   - TileType: 0
