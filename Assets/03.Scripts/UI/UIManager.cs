@@ -74,6 +74,8 @@ public class UIManager : MonoBehaviour
     [Header("Result UI")]
     [SerializeField] List<GameObject> resultObjs;
 
+    [Header("Tutorial")]
+    [SerializeField] GameObject tutorial;
 
     void OnEnable()
     {
@@ -98,8 +100,17 @@ public class UIManager : MonoBehaviour
 
     private void Start()
     {
-        StartCoroutine(FadeController.FadeOut(1f));
+        StartCoroutine(StartCoroutine());
+    }
+
+    IEnumerator StartCoroutine()
+    {
         spaceToggle.color = spaceOffColor;
+
+        tutorial.gameObject.SetActive(GameManager.Instance.curMapType == EMapType.Stage_1);
+        yield return StartCoroutine(FadeController.FadeOut(2f));
+
+        Time.timeScale = GameManager.Instance.curMapType == EMapType.Stage_1 ? 0f : 1f;
     }
 
     public void UpdateHPGage(PlayerUIEvent e)
@@ -196,4 +207,9 @@ public class UIManager : MonoBehaviour
         SceneManagerHelper.ReloadCurrentSceneWithFade(1f);
     }
 
+    public void CloseTutorial()
+    {
+        Time.timeScale = 1f;
+        tutorial.gameObject.SetActive(false);
+    }
 }
